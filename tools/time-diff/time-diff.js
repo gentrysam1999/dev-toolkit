@@ -97,16 +97,20 @@ function renderResults(panel, startVal, endVal) {
 
   const totalSeconds = Math.floor(absDiffMs / 1000);
   const totalMinutes = Math.floor(absDiffMs / (1000 * 60));
-  const totalHours = Math.floor(absDiffMs / (1000 * 60 * 60));
-  const totalDays = Math.floor(absDiffMs / (1000 * 60 * 60 * 24));
-  const totalYears = (absDiffMs / (1000 * 60 * 60 * 24 * 365.25));
+  const totalHours   = Math.floor(absDiffMs / (1000 * 60 * 60));
+  const totalDays    = Math.floor(absDiffMs / (1000 * 60 * 60 * 24));
+  const totalYears   = (absDiffMs / (1000 * 60 * 60 * 24 * 365.25));
+
+  const remSeconds = Math.floor((absDiffMs % (1000 * 60)) / 1000);
+  const remMinutes = Math.floor((absDiffMs % (1000 * 60 * 60)) / (1000 * 60));
+  const remHours   = Math.floor((absDiffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
 
   const rows = [
-    { label: 'Seconds', value: sign + fmt(totalSeconds), unit: 's' },
-    { label: 'Minutes', value: sign + fmt(totalMinutes), unit: 'min' },
-    { label: 'Hours',   value: sign + fmt(totalHours),   unit: 'hr' },
-    { label: 'Days',    value: sign + fmt(totalDays),    unit: 'd' },
-    { label: 'Years',   value: sign + fmtDecimal(totalYears), unit: 'yr' },
+    { label: 'Seconds', parts: [{ num: fmt(totalSeconds),       unit: 's'   }] },
+    { label: 'Minutes', parts: [{ num: fmt(totalMinutes),       unit: 'min' }, { num: fmt(remSeconds),  unit: 's'   }] },
+    { label: 'Hours',   parts: [{ num: fmt(totalHours),         unit: 'hr'  }, { num: fmt(remMinutes),  unit: 'min' }] },
+    { label: 'Days',    parts: [{ num: fmt(totalDays),          unit: 'd'   }, { num: fmt(remHours),    unit: 'hr'  }] },
+    { label: 'Years',   parts: [{ num: fmtDecimal(totalYears),  unit: 'yr'  }] },
   ];
 
   const direction = diffMs === 0
@@ -121,7 +125,7 @@ function renderResults(panel, startVal, endVal) {
       ${rows.map(r => `
         <div class="td-row">
           <span class="td-row__label">${r.label}</span>
-          <span class="td-row__value">${r.value}<span class="td-row__unit"> ${r.unit}</span></span>
+          <span class="td-row__value">${sign}${r.parts.map(p => `${p.num}<span class="td-row__unit"> ${p.unit}</span>`).join(' ')}</span>
         </div>
       `).join('')}
     </div>
