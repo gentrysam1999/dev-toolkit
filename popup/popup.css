@@ -1,0 +1,128 @@
+/* ==========================================================================
+   popup.css — Layout shell only. Tool-specific styles live in tools/<name>/
+   ========================================================================== */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  width: 380px;
+  min-height: 480px;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+  background: #0f0f1a;
+  color: #e2e8f0;
+  overflow: hidden;
+}
+
+/* App shell */
+.app {
+  display: flex;
+  min-height: 480px;
+}
+
+/* ---- Sidebar ---- */
+.sidebar {
+  width: 56px;
+  background: #16162a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 0;
+  border-right: 1px solid #2a2a45;
+  flex-shrink: 0;
+  gap: 8px;
+}
+
+.sidebar__logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin-bottom: 4px;
+}
+
+.sidebar__tabs {
+  list-style: none;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.sidebar__tab {
+  width: 44px;
+  height: 48px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  cursor: pointer;
+  color: #4b5563;
+  transition: background 0.15s, color 0.15s;
+  user-select: none;
+  outline: none;
+  border: none;
+}
+
+.sidebar__tab:hover {
+  background: #2a2a45;
+  color: #a5b4fc;
+}
+
+.sidebar__tab--active {
+  background: #2a2a45;
+  color: #818cf8;
+}
+
+.sidebar__tab:focus-visible {
+  outline: 2px solid #818cf8;
+  outline-offset: -2px;
+}
+
+.sidebar__label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+/* ---- Content area ---- */
+.content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #2a2a45 transparent;
+}
+
+.content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.content::-webkit-scrollbar-thumb {
+  background: #2a2a45;
+  border-radius: 2px;
+}
+
+/* ---- Tool panels ---- */
+.tool-panel {
+  display: none;
+  padding: 16px;
+  min-height: 480px;
+}
+
+.tool-panel--active {
+  display: block;
+}

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dev Toolkit</title>
+  <link rel="stylesheet" href="popup.css" />
+  <link rel="stylesheet" href="../tools/color-picker/color-picker.css" />
+</head>
+<body>
+  <div class="app">
+
+    <!-- LEFT SIDEBAR -->
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar__logo" title="Dev Toolkit">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="11" cy="11" r="9" stroke="#818cf8" stroke-width="2"/>
+          <circle cx="11" cy="11" r="3" fill="#818cf8"/>
+        </svg>
+      </div>
+
+      <ul class="sidebar__tabs" role="tablist" aria-label="Tools">
+
+        <li class="sidebar__tab sidebar__tab--active"
+            role="tab"
+            aria-selected="true"
+            aria-controls="panel-color-picker"
+            data-tool="color-picker"
+            tabindex="0"
+            title="Color Picker">
+          <!-- Eyedropper icon -->
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M20.71 5.63L18.37 3.29a1 1 0 0 0-1.41 0l-2.83 2.83 1.07 1.07L14.1 8.3l-1.06-1.06-6.37 6.37a2 2 0 0 0-.59 1.41V17h2.97a2 2 0 0 0 1.41-.59l6.37-6.37-1.06-1.06 1.06-1.06 1.07 1.07 2.83-2.83a1 1 0 0 0 0-1.53z" fill="currentColor"/>
+            <path d="M3 21h4l-4-4v4z" fill="currentColor"/>
+          </svg>
+          <span class="sidebar__label">Color</span>
+        </li>
+
+        <!--
+          To add a future tool, copy this <li> block, update data-tool,
+          aria-controls, the icon SVG, and the label text.
+        -->
+
+      </ul>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="content" id="content">
+
+      <section class="tool-panel tool-panel--active"
+               id="panel-color-picker"
+               role="tabpanel"
+               aria-label="Color Picker">
+        <!-- Populated by color-picker.js -->
+      </section>
+
+      <!--
+        Future panels:
+        <section class="tool-panel" id="panel-contrast" role="tabpanel" aria-label="Contrast Checker"></section>
+      -->
+
+    </main>
+  </div>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>
