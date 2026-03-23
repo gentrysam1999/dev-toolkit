@@ -11,10 +11,10 @@
  * Clipboard is updated on drag end (pointerup / slider change).
  */
 
-import { hexToRgba, rgbToHsl, hslToRgb, rgbToHex, formatRgba } from '../../shared/color-utils.js';
-import { writeToClipboard } from '../../shared/clipboard.js';
-import { saveToStorage, loadFromStorage } from '../../shared/storage.js';
-import { drawColorChart, drawPlaceholderChart } from '../../shared/canvas-chart.js';
+import { hexToRgba, rgbToHsl, hslToRgb, rgbToHex, formatRgba } from '../../shared/js/color-utils.js';
+import { writeToClipboard } from '../../shared/js/clipboard.js';
+import { saveToStorage, loadFromStorage } from '../../shared/js/storage.js';
+import { drawColorChart, drawPlaceholderChart } from '../../shared/js/canvas-chart.js';
 
 const PANEL_ID = 'panel-color-picker';
 const HISTORY_KEY = 'colorPickerHistory';

@@ -7,8 +7,8 @@
  */
 
 import { buildDiffHtml, DIFF_STORAGE_KEY } from './diff-checker.js';
-import { loadFromStorage } from '../../shared/storage.js';
-import { writeToClipboard } from '../../shared/clipboard.js';
+import { loadFromStorage } from '../../shared/js/storage.js';
+import { writeToClipboard } from '../../shared/js/clipboard.js';
 
 let debounceTimer = null;
 

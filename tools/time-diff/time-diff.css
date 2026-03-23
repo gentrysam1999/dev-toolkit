@@ -30,11 +30,11 @@
 }
 
 .td-label {
-  font-size: 11px;
-  font-weight: 600;
-  color: #818cf8;
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  color: var(--accent);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: var(--tracking-wide);
 }
 
 .td-input-row {
@@ -46,20 +46,19 @@
 .td-input {
   flex: 1;
   min-width: 0;
-  background: #1e1e38;
-  border: 1px solid #2a2a45;
-  border-radius: 6px;
-  color: #e2e8f0;
-  font-size: 13px;
+  background: var(--bg-raised);
+  border: var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: var(--text-body);
   padding: 6px 8px;
   outline: none;
-  font-family: inherit;
+  font-family: var(--font-ui);
   color-scheme: dark;
+  transition: border-color var(--t-color);
 }
 
-.td-input:focus {
-  border-color: #818cf8;
-}
+.td-input:focus { border-color: var(--accent); }
 
 .td-input[type="time"] {
   flex: 0 0 auto;
@@ -67,22 +66,22 @@
 }
 
 .td-btn-now {
-  background: #1e1e38;
-  border: 1px solid #2a2a45;
-  border-radius: 6px;
-  color: #818cf8;
-  font-size: 11px;
-  font-weight: 600;
+  background: var(--bg-raised);
+  border: var(--border);
+  border-radius: var(--radius-md);
+  color: var(--accent);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
   padding: 6px 10px;
   cursor: pointer;
   white-space: nowrap;
-  transition: background 0.15s, border-color 0.15s;
-  font-family: inherit;
+  transition: background var(--t-color), border-color var(--t-color);
+  font-family: var(--font-ui);
 }
 
 .td-btn-now:hover {
-  background: #2a2a45;
-  border-color: #818cf8;
+  background: var(--bg-active);
+  border-color: var(--accent);
 }
 
 /* ---- Action buttons ---- */
@@ -95,51 +94,49 @@
 .td-btn-swap,
 .td-btn-clear {
   flex: 1;
-  background: #1e1e38;
-  border: 1px solid #2a2a45;
-  border-radius: 6px;
-  color: #a0aec0;
-  font-size: 12px;
-  font-weight: 500;
+  background: var(--bg-raised);
+  border: var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: var(--text-btn);
+  font-weight: var(--weight-medium);
   padding: 6px 10px;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
-  font-family: inherit;
+  transition: background var(--t-color), color var(--t-color), border-color var(--t-color);
+  font-family: var(--font-ui);
 }
 
 .td-btn-swap:hover {
-  background: #2a2a45;
-  color: #e2e8f0;
-  border-color: #818cf8;
+  background: var(--bg-active);
+  color: var(--text-primary);
+  border-color: var(--accent);
 }
 
 .td-btn-clear:hover {
-  background: #2a2a45;
-  color: #e2e8f0;
+  background: var(--bg-active);
+  color: var(--text-primary);
 }
 
 /* ---- Placeholder / error ---- */
 
 .td-placeholder,
 .td-error {
-  font-size: 12px;
-  color: #64748b;
+  font-size: var(--text-btn);
+  color: var(--text-muted);
   text-align: center;
   padding: 10px 0;
 }
 
-.td-error {
-  color: #f87171;
-}
+.td-error { color: var(--red); }
 
 /* ---- Results ---- */
 
 .td-direction {
-  font-size: 11px;
-  font-weight: 600;
-  color: #818cf8;
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  color: var(--accent);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: var(--tracking-wide);
   margin-bottom: 8px;
 }
 
@@ -153,26 +150,26 @@
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  background: #1e1e38;
-  border: 1px solid #2a2a45;
-  border-radius: 6px;
+  background: var(--bg-raised);
+  border: var(--border);
+  border-radius: var(--radius-md);
   padding: 7px 12px;
 }
 
 .td-row__label {
-  font-size: 12px;
-  color: #94a3b8;
+  font-size: var(--text-btn);
+  color: var(--text-secondary);
 }
 
 .td-row__value {
-  font-size: 14px;
-  font-weight: 600;
-  color: #e2e8f0;
+  font-size: var(--text-value);
+  font-weight: var(--weight-semibold);
+  color: var(--text-primary);
   font-variant-numeric: tabular-nums;
 }
 
 .td-row__unit {
-  font-size: 11px;
-  font-weight: 400;
-  color: #64748b;
+  font-size: var(--text-base);
+  font-weight: var(--weight-normal);
+  color: var(--text-muted);
 }

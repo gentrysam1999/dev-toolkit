@@ -10,7 +10,7 @@
  * Absent key = enabled (default on).
  */
 
-import { saveToStorage, loadFromStorage } from '../shared/storage.js';
+import { saveToStorage, loadFromStorage } from '../shared/js/storage.js';
 
 const PANEL_ID = 'panel-settings';
 export const ENABLED_TOOLS_KEY = 'devToolkitEnabledTools';

@@ -44,16 +44,22 @@ The settings panel reads registered tools **dynamically from the DOM** (via `[da
 - **Canvas elements** need `width`/`height` set as HTML attributes (backing buffer). CSS sizing is independent — setting only CSS width causes blurry rendering.
 - **Clipboard writes** must happen synchronously after a user gesture — do not defer with `setTimeout`.
 - **`[hidden]` attribute** is explicitly enforced with `[hidden] { display: none !important }` in `popup.css` — this is intentional as the CSS reset would otherwise break it.
-- Use `chrome.storage.local` (via `shared/storage.js`) not `localStorage` — portable to future service workers/content scripts.
+- Use `chrome.storage.local` (via `shared/js/storage.js`) not `localStorage` — portable to future service workers/content scripts.
 
 ## Shared utilities
 
+### JS (`shared/js/`)
 | File | Exports |
 |------|---------|
-| `shared/color-utils.js` | `hexToRgba`, `rgbToHsl`, `hslToRgb`, `rgbToHex`, `formatRgba` |
-| `shared/clipboard.js` | `writeToClipboard(text)` — async, returns bool, has execCommand fallback |
-| `shared/storage.js` | `saveToStorage(key, value)`, `loadFromStorage(key, default)` |
-| `shared/canvas-chart.js` | `drawColorChart(canvas, h, s, l)`, `drawPlaceholderChart(canvas)` |
+| `color-utils.js` | `hexToRgba`, `rgbToHsl`, `hslToRgb`, `rgbToHex`, `formatRgba` |
+| `clipboard.js` | `writeToClipboard(text)` — async, returns bool, has execCommand fallback |
+| `storage.js` | `saveToStorage(key, value)`, `loadFromStorage(key, default)` |
+| `canvas-chart.js` | `drawColorChart(canvas, h, s, l)`, `drawPlaceholderChart(canvas)` |
+
+### CSS (`shared/css/`)
+| File | Purpose |
+|------|---------|
+| `tokens.css` | All CSS custom properties (design tokens). Link first, before any component styles. |
 
 ## Color picker internals
 

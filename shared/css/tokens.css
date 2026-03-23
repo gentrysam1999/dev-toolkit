@@ -1,0 +1,101 @@
+/* ==========================================================================
+   tokens.css — Global CSS custom properties (design tokens)
+   Link this stylesheet first, before any tool or component styles.
+   ========================================================================== */
+
+:root {
+
+  /* ---- Backgrounds ---- */
+  --bg-base:    #0f0f1a;   /* page / popup body */
+  --bg-surface: #16162a;   /* cards, panels, inputs, textareas */
+  --bg-raised:  #1e1e38;   /* inputs that sit inside a surface */
+  --bg-active:  #2a2a45;   /* hover surfaces, active sidebar tab */
+
+  /* ---- Border ---- */
+  --border-color: #2a2a45;
+  --border:       1px solid var(--border-color);
+
+  /* ---- Text colours ---- */
+  --text-bright:    #f1f5f9;  /* highest emphasis — headings, active values */
+  --text-primary:   #e2e8f0;  /* body text, tool names, input values */
+  --text-secondary: #94a3b8;  /* supporting values */
+  --text-muted:     #64748b;  /* units, placeholder-adjacent */
+  --text-dim:       #4b5563;  /* section labels, micro labels */
+  --text-ghost:     #374151;  /* empty states, placeholders */
+
+  /* ---- Accent (indigo) ---- */
+  --accent-strong:       #4f46e5;  /* primary button bg, toggle active */
+  --accent-strong-hover: #4338ca;  /* primary button hover */
+  --accent:              #818cf8;  /* secondary text, focus rings, active icons */
+  --accent-soft:         #a5b4fc;  /* sidebar tab icon hover */
+
+  /* ---- Semantic: green ---- */
+  --green:         #34d399;
+  --green-text:    #6ee7b7;
+  --green-bg-soft: rgba(52, 211, 153, 0.10);
+  --green-bg:      rgba(52, 211, 153, 0.25);
+
+  /* ---- Semantic: red ---- */
+  --red:         #f87171;
+  --red-text:    #fca5a5;
+  --red-bg-soft: rgba(248, 113, 113, 0.10);
+  --red-bg:      rgba(248, 113, 113, 0.25);
+  --red-border:  #7f1d1d;
+  --red-strong:  #ef4444;
+
+  /* ---- Semantic: amber ---- */
+  --amber:            #f59e0b;
+  --amber-text-hover: #fde68a;
+  --amber-border:     #78350f;
+
+  /* ---- Font families ---- */
+  --font-ui:   'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Courier New', 'Consolas', monospace;
+
+  /* ---- Font sizes ---- */
+  --text-xs:    9px;   /* micro labels, sidebar tab labels */
+  --text-sm:    10px;  /* section titles, small labels */
+  --text-base:  11px;  /* small/meta text, copy badges */
+  --text-btn:   12px;  /* buttons, supporting text */
+  --text-body:  13px;  /* body text, inputs */
+  --text-value: 14px;  /* result row values */
+  --text-lg:    16px;  /* large display values (e.g. hex) */
+
+  /* ---- Font weights ---- */
+  --weight-normal:   400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+  --weight-bold:     700;
+
+  /* ---- Letter spacing ---- */
+  --tracking-label: 0.8px;   /* micro labels, section titles */
+  --tracking-tight: 0.3px;   /* sidebar tab labels */
+  --tracking-wide:  0.05em;  /* time-diff labels */
+
+  /* ---- Line heights ---- */
+  --leading-tight:   1.2;
+  --leading-snug:    1.4;
+  --leading-normal:  1.5;
+  --leading-relaxed: 1.6;
+  --leading-loose:   1.7;
+
+  /* ---- Button padding ---- */
+  --btn-pad-primary:   7px 16px;  /* primary / wide buttons */
+  --btn-pad-secondary: 7px 12px;  /* secondary / compact buttons */
+
+  /* ---- Border radius ---- */
+  --radius-xs:  2px;   /* inline marks, badges */
+  --radius-sm:  4px;   /* small icon buttons */
+  --radius-md:  6px;   /* inputs, cards */
+  --radius-lg:  8px;   /* larger cards, textareas */
+  --radius-btn: 7px;   /* all buttons */
+  --radius-tab: 10px;  /* sidebar tabs */
+
+  /* ---- Focus ring ---- */
+  --focus-ring: 2px solid var(--accent);
+
+  /* ---- Transitions ---- */
+  --t-color:     0.15s;      /* color, background, border-color */
+  --t-transform: 0.1s;       /* button press scale */
+  --t-opacity:   0.2s ease;  /* badges, feedback */
+}

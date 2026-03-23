@@ -6,7 +6,7 @@
  * No external dependencies.
  */
 
-import { saveToStorage } from '../../shared/storage.js';
+import { saveToStorage } from '../../shared/js/storage.js';
 
 const PANEL_ID = 'panel-diff-checker';
 const CHAR_LIMIT = 5000; // beyond this, skip char-level diff for performance

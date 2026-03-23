@@ -13,10 +13,10 @@
 body {
   width: 380px;
   min-height: 480px;
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  font-size: 13px;
-  background: #0f0f1a;
-  color: #e2e8f0;
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  background: var(--bg-base);
+  color: var(--text-primary);
   overflow: hidden;
 }
 
@@ -29,12 +29,12 @@ body {
 /* ---- Sidebar ---- */
 .sidebar {
   width: 56px;
-  background: #16162a;
+  background: var(--bg-surface);
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 10px 0;
-  border-right: 1px solid #2a2a45;
+  border-right: var(--border);
   flex-shrink: 0;
   gap: 8px;
 }
@@ -60,39 +60,39 @@ body {
 .sidebar__tab {
   width: 44px;
   height: 48px;
-  border-radius: 10px;
+  border-radius: var(--radius-tab);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 3px;
   cursor: pointer;
-  color: #4b5563;
-  transition: background 0.15s, color 0.15s;
+  color: var(--text-dim);
+  transition: background var(--t-color), color var(--t-color);
   user-select: none;
   outline: none;
   border: none;
 }
 
 .sidebar__tab:hover {
-  background: #2a2a45;
-  color: #a5b4fc;
+  background: var(--bg-active);
+  color: var(--accent-soft);
 }
 
 .sidebar__tab--active {
-  background: #2a2a45;
-  color: #818cf8;
+  background: var(--bg-active);
+  color: var(--accent);
 }
 
 .sidebar__tab:focus-visible {
-  outline: 2px solid #818cf8;
+  outline: var(--focus-ring);
   outline-offset: -2px;
 }
 
 .sidebar__label {
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-tight);
   text-transform: uppercase;
 }
 
@@ -104,7 +104,7 @@ body {
   flex-direction: column;
   align-items: center;
   padding-top: 8px;
-  border-top: 1px solid #2a2a45;
+  border-top: var(--border);
   list-style: none;
 }
 
@@ -114,21 +114,12 @@ body {
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: thin;
-  scrollbar-color: #2a2a45 transparent;
+  scrollbar-color: var(--border-color) transparent;
 }
 
-.content::-webkit-scrollbar {
-  width: 4px;
-}
-
-.content::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.content::-webkit-scrollbar-thumb {
-  background: #2a2a45;
-  border-radius: 2px;
-}
+.content::-webkit-scrollbar { width: 4px; }
+.content::-webkit-scrollbar-track { background: transparent; }
+.content::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 2px; }
 
 /* ---- Tool panels ---- */
 .tool-panel {

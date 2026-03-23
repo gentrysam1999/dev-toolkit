@@ -16,11 +16,11 @@
 }
 
 .st-section-title {
-  font-size: 10px;
-  font-weight: 700;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
   text-transform: uppercase;
-  letter-spacing: 0.8px;
-  color: #4b5563;
+  letter-spacing: var(--tracking-label);
+  color: var(--text-dim);
   margin: 0;
 }
 
@@ -36,20 +36,20 @@
   align-items: center;
   justify-content: space-between;
   padding: 8px 10px;
-  border-radius: 8px;
-  background: #16162a;
-  border: 1px solid #2a2a45;
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  border: var(--border);
 }
 
 .st-tool-name {
-  font-size: 13px;
-  color: #e2e8f0;
-  font-weight: 500;
+  font-size: var(--text-body);
+  color: var(--text-primary);
+  font-weight: var(--weight-medium);
 }
 
 .st-empty {
-  font-size: 11px;
-  color: #374151;
+  font-size: var(--text-base);
+  color: var(--text-ghost);
   font-style: italic;
 }
 
@@ -71,15 +71,15 @@
 .st-toggle-track {
   width: 36px;
   height: 20px;
-  background: #2a2a45;
+  background: var(--bg-active);
   border-radius: 10px;
-  transition: background 0.2s;
+  transition: background var(--t-opacity);
   position: relative;
   display: block;
 }
 
 .st-toggle-input:checked + .st-toggle-track {
-  background: #4f46e5;
+  background: var(--accent-strong);
 }
 
 .st-toggle-thumb {
@@ -88,7 +88,7 @@
   left: 3px;
   width: 14px;
   height: 14px;
-  background: #6b7280;
+  background: var(--text-muted);
   border-radius: 50%;
   transition: transform 0.2s, background 0.2s;
   display: block;
@@ -100,7 +100,7 @@
 }
 
 .st-toggle-input:focus-visible + .st-toggle-track {
-  outline: 2px solid #818cf8;
+  outline: var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -110,10 +110,10 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 10px 10px;
-  border-radius: 8px;
-  background: #16162a;
-  border: 1px solid #2a2a45;
+  padding: 10px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  border: var(--border);
 }
 
 .st-dev-info {
@@ -124,32 +124,32 @@
 }
 
 .st-dev-label {
-  font-size: 13px;
-  color: #e2e8f0;
-  font-weight: 500;
+  font-size: var(--text-body);
+  color: var(--text-primary);
+  font-weight: var(--weight-medium);
 }
 
 .st-dev-desc {
-  font-size: 10px;
-  color: #4b5563;
-  line-height: 1.4;
+  font-size: var(--text-sm);
+  color: var(--text-dim);
+  line-height: var(--leading-snug);
 }
 
 .st-btn-reload {
   padding: 6px 14px;
-  border-radius: 7px;
-  border: 1px solid #78350f;
+  border-radius: var(--radius-btn);
+  border: 1px solid var(--amber-border);
   background: transparent;
-  color: #f59e0b;
-  font-size: 12px;
-  font-weight: 600;
+  color: var(--amber);
+  font-size: var(--text-btn);
+  font-weight: var(--weight-semibold);
   cursor: pointer;
   white-space: nowrap;
   flex-shrink: 0;
-  transition: background 0.15s, color 0.15s;
+  transition: background var(--t-color), color var(--t-color);
 }
 
 .st-btn-reload:hover {
-  background: #78350f;
-  color: #fde68a;
+  background: var(--amber-border);
+  color: var(--amber-text-hover);
 }
