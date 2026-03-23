@@ -9,6 +9,9 @@ A living document for feature ideas and potential new tools. Nothing here is com
 | Tool | Status |
 |------|--------|
 | Color Picker | ✅ Done |
+| Time Diff | ✅ Done |
+| Diff Checker | ✅ Done |
+| Settings | ✅ Done |
 
 ---
 
@@ -43,8 +46,8 @@ Pick or customise a `cubic-bezier()` curve with a drag-point canvas. Preview the
 
 ## Text & Comparison
 
-### Diff Checker
-Paste two blocks of plain text side-by-side and see character-level differences highlighted inline. Added/changed characters highlighted green on the right, removed/changed characters highlighted red on the left. Useful for spotting subtle copy changes, comparing CSS snippets, or reviewing client content edits. Implemented using a character-level LCS diff algorithm — no external libraries needed.
+### Diff Checker ✅
+Paste two blocks of plain text side-by-side and see character-level differences highlighted inline. Added/changed characters highlighted green on the right, removed/changed characters highlighted red on the left. Useful for spotting subtle copy changes, comparing CSS snippets, or reviewing client content edits. Implemented using a character-level LCS diff algorithm — no external libraries needed. Supports opening in a full browser tab with editable inputs and per-column copy buttons.
 
 ---
 
