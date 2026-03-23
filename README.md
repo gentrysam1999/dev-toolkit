@@ -4,7 +4,8 @@ A personal Chrome extension for web developers. Built to be expanded — new too
 
 **Current tools:**
 - Color Picker
-- Time Diff Checker
+- Diff Checker
+- Time Diff
 
 ---
 
@@ -37,26 +38,54 @@ Pick the exact color of any pixel on any webpage.
 
 The popup also shows:
 - A large color swatch preview
-- Hex value (e.g. `#FF5733`)
-- RGBA value (e.g. `rgba(255, 87, 51, 1)`)
-- HSL value (e.g. `hsl(14, 100%, 60%)`)
-- A Saturation/Lightness chart with a marker showing where the color sits
-- Your last 5 picked colors as clickable swatches — click any to re-copy it
+- Hex, RGBA, and HSL values — all editable by clicking and typing
+- A Saturation/Lightness chart — drag to adjust the picked color
+- A hue slider to shift the hue after picking
+- A **Save** button to add the current color to your recents
+- Up to 10 recent colors as clickable swatches — click to restore, hover to remove
 
-### Time Diff Checker
+### Diff Checker
+
+Compare two blocks of plain text side by side with character-level highlighting.
+
+1. Paste the original text into the left input and the modified text into the right
+2. The diff updates live as you type
+3. Deleted characters are highlighted red on the left; inserted characters green on the right
+4. Click **Open in Tab** to open a full-width view in a new browser tab
+
+In the full-tab view you can also edit either text directly and copy either side to clipboard.
+
+### Time Diff
 
 Calculate the difference between two datetimes.
 
-1. Enter a **Start** and **End** date and time using the date picker and time spinner
-2. The difference is shown instantly as total seconds, minutes, hours, days, and years
-3. Use **Now** to fill either field with the current date and time
-4. Use **Swap** to reverse start and end, or **Clear** to reset both fields
+1. Enter a **Start** and **End** date — time is optional and defaults to 00:00
+2. Click **Now** next to either field to fill it with the current date and time
+3. The difference is shown instantly across five rows:
+   - **Seconds** — total seconds
+   - **Minutes** — total minutes + remaining seconds (e.g. `90min 30s`)
+   - **Hours** — total hours + remaining minutes (e.g. `2hr 45min`)
+   - **Days** — total days + remaining hours (e.g. `6d 12hr`)
+   - **Years** — decimal years (e.g. `1.5023yr`)
+4. A direction label tells you whether end is after, before, or equal to start — negative differences are shown with a `−` prefix
+5. Use **Swap** to reverse start and end, or **Clear** to reset both fields
+
+---
+
+## Settings
+
+Click the gear icon at the bottom of the sidebar to open Settings.
+
+- **Tools** — toggle any tool on or off. Disabled tools are hidden from the sidebar.
+- **Developer → Reload Extension** — reloads the extension without navigating to `chrome://extensions`. Useful after pulling updates.
 
 ---
 
 ## Updating after code changes
 
-After editing any file, go to `chrome://extensions` and click the **↺** (refresh) button on the Dev Toolkit card.
+After editing any file, either:
+- Go to `chrome://extensions` and click the **↺** (refresh) button on the Dev Toolkit card, or
+- Open the extension popup, go to **Settings**, and click **Reload Extension**
 
 ---
 
@@ -65,10 +94,13 @@ After editing any file, go to `chrome://extensions` and click the **↺** (refre
 ```
 manifest.json              Chrome extension config (MV3)
 popup/                     Popup shell: sidebar nav + panel layout
-tools/color-picker/        Color picker tool (self-contained JS + CSS)
-tools/time-diff/           Time diff checker tool (self-contained JS + CSS)
-shared/                    Shared utilities (color math, clipboard, storage, chart)
+tools/color-picker/        Color picker tool
+tools/diff-checker/        Diff checker tool (includes full-tab view)
+tools/time-diff/           Time diff tool
+settings/                  Settings panel
+shared/                    Shared utilities (color math, clipboard, storage, canvas chart)
 icons/                     Extension icons
+docs/                      Planning and roadmap documents
 ```
 
 Adding a new tool only requires creating a folder under `tools/`, adding a sidebar tab and panel slot in `popup.html`, and registering an init function in `popup.js`. See `CLAUDE.md` for details.
