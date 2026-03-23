@@ -8,6 +8,7 @@
  */
 
 import { initColorPicker } from '../tools/color-picker/color-picker.js';
+import { initDiffChecker } from '../tools/diff-checker/diff-checker.js';
 import { initTimeDiff } from '../tools/time-diff/time-diff.js';
 import { initSettings, ENABLED_TOOLS_KEY } from '../settings/settings.js';
 import { loadFromStorage } from '../shared/storage.js';
@@ -15,6 +16,7 @@ import { loadFromStorage } from '../shared/storage.js';
 // ---- Tool registry ----
 const TOOLS = {
   'color-picker': initColorPicker,
+  'diff-checker': initDiffChecker,
   'time-diff':    initTimeDiff,
 };
 

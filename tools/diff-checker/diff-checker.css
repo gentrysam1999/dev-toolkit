@@ -1,0 +1,202 @@
+/* ==========================================================================
+   diff-checker.css — All selectors prefixed .dc- to avoid collisions
+   ========================================================================== */
+
+.dc-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ---- Inputs ---- */
+.dc-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.dc-input-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dc-input-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: #4b5563;
+}
+
+.dc-textarea {
+  width: 100%;
+  height: 100px;
+  resize: vertical;
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #e2e8f0;
+  background: #16162a;
+  border: 1px solid #2a2a45;
+  border-radius: 6px;
+  padding: 6px 8px;
+  outline: none;
+  transition: border-color 0.15s;
+  box-sizing: border-box;
+}
+
+.dc-textarea:focus {
+  border-color: #818cf8;
+}
+
+.dc-textarea::placeholder {
+  color: #374151;
+}
+
+/* ---- Actions ---- */
+.dc-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.dc-btn-compare {
+  padding: 7px 16px;
+  border-radius: 7px;
+  border: none;
+  background: #4f46e5;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+  white-space: nowrap;
+}
+
+.dc-btn-compare:hover {
+  background: #4338ca;
+}
+
+.dc-btn-compare:active {
+  transform: scale(0.97);
+}
+
+.dc-btn-clear {
+  padding: 7px 12px;
+  border-radius: 7px;
+  border: 1px solid #2a2a45;
+  background: transparent;
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.dc-btn-clear:hover {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.dc-btn-tab {
+  padding: 7px 12px;
+  border-radius: 7px;
+  border: 1px solid #2a2a45;
+  background: transparent;
+  color: #818cf8;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+}
+
+.dc-btn-tab:hover {
+  border-color: #818cf8;
+  background: #2a2a45;
+}
+
+/* ---- Outputs ---- */
+.dc-outputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.dc-outputs--hidden {
+  display: none;
+}
+
+.dc-output-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.dc-output-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: #4b5563;
+}
+
+.dc-output {
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: 11px;
+  line-height: 1.6;
+  color: #cbd5e1;
+  background: #16162a;
+  border: 1px solid #2a2a45;
+  border-radius: 6px;
+  padding: 6px 8px;
+  white-space: pre-wrap;
+  word-break: break-all;
+  overflow-y: auto;
+  max-height: 260px;
+  min-height: 40px;
+  box-sizing: border-box;
+}
+
+/* ---- Diff highlights ---- */
+
+/* Full-line delete (left) */
+.dc-line-del {
+  display: block;
+  background: rgba(248, 113, 113, 0.1);
+  border-radius: 2px;
+}
+
+/* Full-line insert (right) */
+.dc-line-ins {
+  display: block;
+  background: rgba(52, 211, 153, 0.1);
+  border-radius: 2px;
+}
+
+/* Blank spacer line for the opposite side of a pure insert/delete */
+.dc-line-empty {
+  display: block;
+  color: transparent;
+  user-select: none;
+}
+
+/* Inline character-level highlights (within replaced lines) */
+mark.dc-del {
+  background: rgba(248, 113, 113, 0.3);
+  color: #fca5a5;
+  border-radius: 2px;
+  padding: 0 1px;
+}
+
+mark.dc-ins {
+  background: rgba(52, 211, 153, 0.3);
+  color: #6ee7b7;
+  border-radius: 2px;
+  padding: 0 1px;
+}

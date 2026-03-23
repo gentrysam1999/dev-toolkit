@@ -1,0 +1,218 @@
+/* ==========================================================================
+   diff-view.css — Full-tab diff view page styles
+   ========================================================================== */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #0f0f1a;
+  color: #e2e8f0;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+  min-height: 100vh;
+}
+
+.dv-root {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ---- Header ---- */
+.dv-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #2a2a45;
+}
+
+.dv-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dv-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #f1f5f9;
+  letter-spacing: 0.2px;
+}
+
+.dv-legend {
+  display: flex;
+  gap: 16px;
+}
+
+.dv-legend-del,
+.dv-legend-ins {
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dv-legend-del::before {
+  content: '';
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  background: rgba(248, 113, 113, 0.3);
+  border: 1px solid #f87171;
+}
+
+.dv-legend-del { color: #fca5a5; }
+
+.dv-legend-ins::before {
+  content: '';
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  background: rgba(52, 211, 153, 0.3);
+  border: 1px solid #34d399;
+}
+
+.dv-legend-ins { color: #6ee7b7; }
+
+/* ---- Editable inputs ---- */
+.dv-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.dv-input-col {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dv-input-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: #4b5563;
+}
+
+.dv-textarea {
+  width: 100%;
+  height: 160px;
+  resize: vertical;
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #e2e8f0;
+  background: #16162a;
+  border: 1px solid #2a2a45;
+  border-radius: 8px;
+  padding: 10px 12px;
+  outline: none;
+  transition: border-color 0.15s;
+  box-sizing: border-box;
+}
+
+.dv-textarea:focus {
+  border-color: #818cf8;
+}
+
+.dv-textarea::placeholder {
+  color: #374151;
+}
+
+/* ---- Columns ---- */
+.dv-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+.dv-col {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dv-col-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dv-col-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: #4b5563;
+  flex: 1;
+}
+
+.dv-btn-copy {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 5px;
+  border: 1px solid #2a2a45;
+  background: transparent;
+  color: #4b5563;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.dv-btn-copy:hover {
+  border-color: #818cf8;
+  color: #818cf8;
+  background: #1e1e35;
+}
+
+.dv-copied {
+  font-size: 11px;
+  font-weight: 600;
+  color: #34d399;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  white-space: nowrap;
+}
+
+.dv-copied--visible {
+  opacity: 1;
+}
+
+/* Override the popup's max-height constraint for the full-tab view */
+.dv-output {
+  max-height: none !important;
+  font-size: 13px !important;
+  line-height: 1.7 !important;
+  background: #16162a;
+  border: 1px solid #2a2a45;
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+/* ---- Empty state ---- */
+.dv-empty {
+  color: #4b5563;
+  font-size: 13px;
+  text-align: center;
+  padding: 48px 0;
+}
+
+.dv-empty strong {
+  color: #818cf8;
+}
