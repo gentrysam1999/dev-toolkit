@@ -6,6 +6,7 @@
   <title>Dev Toolkit</title>
   <link rel="stylesheet" href="popup.css" />
   <link rel="stylesheet" href="../tools/color-picker/color-picker.css" />
+  <link rel="stylesheet" href="../tools/time-diff/time-diff.css" />
   <link rel="stylesheet" href="../settings/settings.css" />
   <link rel="stylesheet" href="../tools/diff-checker/diff-checker.css" />
 </head>
@@ -55,6 +56,21 @@
           <span class="sidebar__label">Diff</span>
         </li>
 
+        <li class="sidebar__tab"
+            role="tab"
+            aria-selected="false"
+            aria-controls="panel-time-diff"
+            data-tool="time-diff"
+            tabindex="-1"
+            title="Time Diff">
+          <!-- Clock/diff icon -->
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>
+            <path d="M12 7v5l3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="sidebar__label">Time</span>
+        </li>
+
         <!--
           To add a future tool, copy this <li> block, update data-tool,
           aria-controls, the icon SVG, and the label text.
@@ -89,6 +105,13 @@
                role="tabpanel"
                aria-label="Color Picker">
         <!-- Populated by color-picker.js -->
+      </section>
+
+      <section class="tool-panel"
+               id="panel-time-diff"
+               role="tabpanel"
+               aria-label="Time Diff">
+        <!-- Populated by time-diff.js -->
       </section>
 
       <section class="tool-panel"

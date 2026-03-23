@@ -4,6 +4,7 @@ A personal Chrome extension for web developers. Built to be expanded — new too
 
 **Current tools:**
 - Color Picker
+- Time Diff Checker
 
 ---
 
@@ -42,6 +43,15 @@ The popup also shows:
 - A Saturation/Lightness chart with a marker showing where the color sits
 - Your last 5 picked colors as clickable swatches — click any to re-copy it
 
+### Time Diff Checker
+
+Calculate the difference between two datetimes.
+
+1. Enter a **Start** and **End** date and time using the date picker and time spinner
+2. The difference is shown instantly as total seconds, minutes, hours, days, and years
+3. Use **Now** to fill either field with the current date and time
+4. Use **Swap** to reverse start and end, or **Clear** to reset both fields
+
 ---
 
 ## Updating after code changes
@@ -56,6 +66,7 @@ After editing any file, go to `chrome://extensions` and click the **↺** (refre
 manifest.json              Chrome extension config (MV3)
 popup/                     Popup shell: sidebar nav + panel layout
 tools/color-picker/        Color picker tool (self-contained JS + CSS)
+tools/time-diff/           Time diff checker tool (self-contained JS + CSS)
 shared/                    Shared utilities (color math, clipboard, storage, chart)
 icons/                     Extension icons
 ```
