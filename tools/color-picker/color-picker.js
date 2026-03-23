@@ -20,6 +20,9 @@ const PANEL_ID = 'panel-color-picker';
 const HISTORY_KEY = 'colorPickerHistory';
 const HISTORY_MAX = 5;
 
+// Placeholder text shown before any color is picked
+const EMPTY = { hex: '#------', rgb: 'rgba(—, —, —, —)', hsl: 'hsl(—, —%, —%)' };
+
 // ---- Module-level HSL state ----------------------------------------------
 // Source of truth for the currently displayed/adjusted color.
 // HSL is used because the chart and slider are both HSL-based.
@@ -47,10 +50,7 @@ export async function initColorPicker() {
     row.querySelector('.cp-copy-btn').addEventListener('click', () => copyValueRow(row));
   });
 
-  // Value inputs
   wireValueInputs(panel);
-
-  // Canvas interaction
   wireCanvasInteraction(panel, canvas);
 
   // Hue slider
@@ -58,8 +58,7 @@ export async function initColorPicker() {
   slider.addEventListener('input', () => {
     if (!hasColor) {
       hasColor = true;
-      // Default to full saturation so the hue is visible
-      if (state.s === 0) state.s = 100;
+      if (state.s === 0) state.s = 100; // default to full saturation so the hue is visible
     }
     state.h = Number(slider.value);
     panel.querySelector('.cp-hue-value').textContent = `${state.h}°`;
@@ -105,36 +104,39 @@ async function handlePickResult(hex) {
   const panel = document.getElementById(PANEL_ID);
   setColorFromHex(panel, hex);
 
-  const copied = await writeToClipboard((currentDisplayHex ?? hex).toUpperCase());
-  if (copied) flashCopiedBadge(panel);
+  const copied = await writeToClipboard(hex.toUpperCase());
+  if (copied) flash(panel.querySelector('.cp-copied-badge'), 'cp-copied-badge--visible', 1800);
 
-  await addToHistory(panel, currentDisplayHex ?? hex);
+  await mutateHistory(panel, (h) =>
+    [hex, ...h.filter((c) => c.toLowerCase() !== hex.toLowerCase())].slice(0, HISTORY_MAX)
+  );
 }
 
 // ---- State → display -----------------------------------------------------
 
 /**
  * Set state from a hex value and update all displays.
- * Used by EyeDropper result, history swatch clicks, and init.
+ * Passes the original hex through to applyStateToDisplay so displays
+ * always show the exact picked value — no HSL round-trip drift.
  */
 function setColorFromHex(panel, hex) {
   const { r, g, b } = hexToRgba(hex);
-  const hsl = rgbToHsl(r, g, b);
-  state = { h: hsl.h, s: hsl.s, l: hsl.l };
+  state = { ...rgbToHsl(r, g, b) };
   hasColor = true;
-  applyStateToDisplay(panel, false);
+  applyStateToDisplay(panel, false, hex);
 }
 
 /**
- * Convert current HSL state → hex → update all DOM elements.
+ * Convert current HSL state → update all DOM elements.
  * @param {HTMLElement} panel
  * @param {boolean} copyToClipboard
+ * @param {string|null} originalHex  When set, swatch/hex/rgba use this exact value
+ *                                   instead of the HSL round-trip result.
  */
-async function applyStateToDisplay(panel, copyToClipboard) {
-  const { r, g, b } = hslToRgb(state.h, state.s, state.l);
-  const hex = rgbToHex(r, g, b);
+async function applyStateToDisplay(panel, copyToClipboard, originalHex = null) {
+  const { r, g, b } = originalHex ? hexToRgba(originalHex) : hslToRgb(state.h, state.s, state.l);
+  const hex = originalHex ?? rgbToHex(r, g, b);
   currentDisplayHex = hex;
-  const rgba = { r, g, b, a: 255 };
 
   const swatch = panel.querySelector('.cp-swatch');
   swatch.style.backgroundColor = hex;
@@ -142,18 +144,17 @@ async function applyStateToDisplay(panel, copyToClipboard) {
 
   // Don't overwrite an input the user is currently editing
   const active = document.activeElement;
-  if (!active || !active.classList.contains('cp-hex-value'))
+  if (!active?.classList.contains('cp-hex-value'))
     panel.querySelector('.cp-hex-value').value = hex.toUpperCase();
-  if (!active || !active.classList.contains('cp-rgba-value'))
-    panel.querySelector('.cp-rgba-value').value = formatRgba(rgba);
-  if (!active || !active.classList.contains('cp-hsl-value'))
+  if (!active?.classList.contains('cp-rgba-value'))
+    panel.querySelector('.cp-rgba-value').value = formatRgba({ r, g, b, a: 255 });
+  if (!active?.classList.contains('cp-hsl-value'))
     panel.querySelector('.cp-hsl-value').value = `hsl(${state.h}, ${state.s}%, ${state.l}%)`;
 
   // Sync hue slider position + label
   const slider = panel.querySelector('.cp-hue-slider');
   if (slider && Number(slider.value) !== state.h) slider.value = state.h;
-  const hueLabel = panel.querySelector('.cp-hue-value');
-  if (hueLabel) hueLabel.textContent = `${state.h}°`;
+  panel.querySelector('.cp-hue-value').textContent = `${state.h}°`;
 
   panel.querySelector('.cp-btn-reset').hidden = false;
   panel.querySelector('.cp-btn-save').hidden = false;
@@ -162,7 +163,7 @@ async function applyStateToDisplay(panel, copyToClipboard) {
 
   if (copyToClipboard) {
     const copied = await writeToClipboard(hex.toUpperCase());
-    if (copied) flashCopiedBadge(panel);
+    if (copied) flash(panel.querySelector('.cp-copied-badge'), 'cp-copied-badge--visible', 1800);
   }
 }
 
@@ -176,36 +177,32 @@ function wireCanvasInteraction(panel, canvas) {
     return { s, l };
   }
 
+  function updateSL(e, copyClipboard) {
+    const { s, l } = getSLFromPointer(e);
+    state.s = s;
+    state.l = l;
+    applyStateToDisplay(panel, copyClipboard);
+  }
+
   canvas.addEventListener('pointerdown', (e) => {
     if (!hasColor) hasColor = true;
     isDragging = true;
     canvas.setPointerCapture(e.pointerId);
-    const { s, l } = getSLFromPointer(e);
-    state.s = s;
-    state.l = l;
-    applyStateToDisplay(panel, false);
+    updateSL(e, false);
   });
 
   canvas.addEventListener('pointermove', (e) => {
-    if (!isDragging) return;
-    const { s, l } = getSLFromPointer(e);
-    state.s = s;
-    state.l = l;
-    applyStateToDisplay(panel, false);
+    if (isDragging) updateSL(e, false);
   });
 
   canvas.addEventListener('pointerup', (e) => {
     if (!isDragging) return;
     isDragging = false;
-    const { s, l } = getSLFromPointer(e);
-    state.s = s;
-    state.l = l;
-    applyStateToDisplay(panel, true);
+    updateSL(e, true);
   });
 
   canvas.addEventListener('pointercancel', () => { isDragging = false; });
 
-  // Show crosshair cursor when hovering a loaded chart
   canvas.style.cursor = 'crosshair';
 }
 
@@ -213,9 +210,9 @@ function wireCanvasInteraction(panel, canvas) {
 
 function wireValueInputs(panel) {
   const inputs = [
-    { el: panel.querySelector('.cp-hex-value'),  type: 'hex'  },
-    { el: panel.querySelector('.cp-rgba-value'), type: 'rgb'  },
-    { el: panel.querySelector('.cp-hsl-value'),  type: 'hsl'  },
+    { el: panel.querySelector('.cp-hex-value'),  type: 'hex' },
+    { el: panel.querySelector('.cp-rgba-value'), type: 'rgb' },
+    { el: panel.querySelector('.cp-hsl-value'),  type: 'hsl' },
   ];
 
   inputs.forEach(({ el, type }) => {
@@ -231,11 +228,12 @@ function wireValueInputs(panel) {
 function commitInput(panel, el, type) {
   const raw = el.value.trim();
   let newHsl = null;
+  let originalHex = null;
 
   if (type === 'hex') {
-    const hex = parseHexInput(raw);
-    if (hex) {
-      const { r, g, b } = hexToRgba(hex);
+    originalHex = parseHexInput(raw);
+    if (originalHex) {
+      const { r, g, b } = hexToRgba(originalHex);
       newHsl = rgbToHsl(r, g, b);
     }
   } else if (type === 'rgb') {
@@ -248,7 +246,7 @@ function commitInput(panel, el, type) {
   if (newHsl) {
     state = newHsl;
     hasColor = true;
-    applyStateToDisplay(panel, false);
+    applyStateToDisplay(panel, false, originalHex);
   } else {
     revertInput(panel, el, type);
   }
@@ -256,16 +254,17 @@ function commitInput(panel, el, type) {
 
 function revertInput(panel, el, type) {
   if (!hasColor) {
-    el.value = type === 'hex' ? '#------'
-      : type === 'rgb' ? 'rgba(—, —, —, —)'
-      : 'hsl(—, —%, —%)';
+    el.value = EMPTY[type === 'rgb' ? 'rgb' : type];
     return;
   }
-  const { r, g, b } = hslToRgb(state.h, state.s, state.l);
-  const hex = rgbToHex(r, g, b);
-  if (type === 'hex') el.value = hex.toUpperCase();
-  else if (type === 'rgb') el.value = formatRgba({ r, g, b, a: 255 });
-  else el.value = `hsl(${state.h}, ${state.s}%, ${state.l}%)`;
+  if (type === 'hex') {
+    el.value = (currentDisplayHex ?? '').toUpperCase();
+  } else if (type === 'rgb') {
+    const { r, g, b } = hexToRgba(currentDisplayHex);
+    el.value = formatRgba({ r, g, b, a: 255 });
+  } else {
+    el.value = `hsl(${state.h}, ${state.s}%, ${state.l}%)`;
+  }
 }
 
 // ---- Input parsers -------------------------------------------------------
@@ -307,11 +306,7 @@ async function copyValueRow(row) {
   if (text.includes('—') || text === '#------') return;
 
   const copied = await writeToClipboard(text);
-  if (!copied) return;
-
-  const badge = row.querySelector('.cp-row-copied');
-  badge.classList.add('cp-row-copied--visible');
-  setTimeout(() => badge.classList.remove('cp-row-copied--visible'), 1400);
+  if (copied) flash(row.querySelector('.cp-row-copied'), 'cp-row-copied--visible');
 }
 
 // ---- History -------------------------------------------------------------
@@ -344,7 +339,7 @@ function renderHistory(panel, history) {
     removeBtn.innerHTML = '×';
     removeBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      removeFromHistory(panel, hex);
+      mutateHistory(panel, (h) => h.filter((c) => c.toLowerCase() !== hex.toLowerCase()));
     });
 
     item.appendChild(swatch);
@@ -355,25 +350,22 @@ function renderHistory(panel, history) {
 
 async function saveCurrentToHistory(panel) {
   if (!hasColor || !currentDisplayHex) return;
-  await addToHistory(panel, currentDisplayHex);
+  await mutateHistory(panel, (h) =>
+    [currentDisplayHex, ...h.filter((c) => c.toLowerCase() !== currentDisplayHex.toLowerCase())].slice(0, HISTORY_MAX)
+  );
   const btn = panel.querySelector('.cp-btn-save');
   btn.textContent = 'Saved!';
   setTimeout(() => { btn.textContent = 'Save'; }, 1400);
 }
 
 /**
- * Adds hex to front of history. If already present, moves it to front.
+ * Load, transform, save, and re-render history in one step.
+ * @param {HTMLElement} panel
+ * @param {function(string[]): string[]} transform
  */
-async function addToHistory(panel, hex) {
+async function mutateHistory(panel, transform) {
   const history = await loadFromStorage(HISTORY_KEY, []);
-  const updated = [hex, ...history.filter((c) => c.toLowerCase() !== hex.toLowerCase())].slice(0, HISTORY_MAX);
-  await saveToStorage(HISTORY_KEY, updated);
-  renderHistory(panel, updated);
-}
-
-async function removeFromHistory(panel, hex) {
-  const history = await loadFromStorage(HISTORY_KEY, []);
-  const updated = history.filter((c) => c.toLowerCase() !== hex.toLowerCase());
+  const updated = transform(history);
   await saveToStorage(HISTORY_KEY, updated);
   renderHistory(panel, updated);
 }
@@ -389,9 +381,9 @@ function resetColorPicker(panel) {
   swatch.style.backgroundColor = '';
   swatch.classList.add('cp-swatch--empty');
 
-  panel.querySelector('.cp-hex-value').value = '#------';
-  panel.querySelector('.cp-rgba-value').value = 'rgba(—, —, —, —)';
-  panel.querySelector('.cp-hsl-value').value = 'hsl(—, —%, —%)';
+  panel.querySelector('.cp-hex-value').value = EMPTY.hex;
+  panel.querySelector('.cp-rgba-value').value = EMPTY.rgb;
+  panel.querySelector('.cp-hsl-value').value = EMPTY.hsl;
   panel.querySelector('.cp-hue-slider').value = 0;
   panel.querySelector('.cp-btn-reset').hidden = true;
   panel.querySelector('.cp-btn-save').hidden = true;
@@ -401,16 +393,17 @@ function resetColorPicker(panel) {
 
 // ---- Helpers -------------------------------------------------------------
 
-function flashCopiedBadge(panel) {
-  const badge = panel.querySelector('.cp-copied-badge');
-  badge.classList.add('cp-copied-badge--visible');
-  setTimeout(() => badge.classList.remove('cp-copied-badge--visible'), 1800);
+/**
+ * Temporarily adds a CSS class to an element then removes it after a delay.
+ */
+function flash(el, cls, ms = 1400) {
+  el.classList.add(cls);
+  setTimeout(() => el.classList.remove(cls), ms);
 }
 
 function showError(msg) {
   const panel = document.getElementById(PANEL_ID);
-  const existing = panel.querySelector('.cp-error');
-  if (existing) existing.remove();
+  panel.querySelector('.cp-error')?.remove();
 
   const el = document.createElement('p');
   el.className = 'cp-error';
@@ -431,7 +424,7 @@ function getTemplate() {
 
           <div class="cp-value-row" data-copy-target="hex">
             <span class="cp-value-label">HEX</span>
-            <input class="cp-hex-value" type="text" value="#------" aria-label="Hex colour value" spellcheck="false" autocomplete="off" />
+            <input class="cp-hex-value" type="text" value="${EMPTY.hex}" aria-label="Hex colour value" spellcheck="false" autocomplete="off" />
             <button class="cp-copy-btn" type="button" aria-label="Copy hex value" title="Copy">
               ${copyIcon()}
             </button>
@@ -440,7 +433,7 @@ function getTemplate() {
 
           <div class="cp-value-row" data-copy-target="rgba">
             <span class="cp-value-label">RGB</span>
-            <input class="cp-rgba-value" type="text" value="rgba(—, —, —, —)" aria-label="RGB colour value" spellcheck="false" autocomplete="off" />
+            <input class="cp-rgba-value" type="text" value="${EMPTY.rgb}" aria-label="RGB colour value" spellcheck="false" autocomplete="off" />
             <button class="cp-copy-btn" type="button" aria-label="Copy RGB value" title="Copy">
               ${copyIcon()}
             </button>
@@ -449,7 +442,7 @@ function getTemplate() {
 
           <div class="cp-value-row" data-copy-target="hsl">
             <span class="cp-value-label">HSL</span>
-            <input class="cp-hsl-value" type="text" value="hsl(—, —%, —%)" aria-label="HSL colour value" spellcheck="false" autocomplete="off" />
+            <input class="cp-hsl-value" type="text" value="${EMPTY.hsl}" aria-label="HSL colour value" spellcheck="false" autocomplete="off" />
             <button class="cp-copy-btn" type="button" aria-label="Copy HSL value" title="Copy">
               ${copyIcon()}
             </button>
