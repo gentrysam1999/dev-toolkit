@@ -27,6 +27,7 @@ const HISTORY_MAX = 5;
 let state = { h: 0, s: 0, l: 50 };
 let hasColor = false;
 let isDragging = false;
+let currentDisplayHex = null; // always reflects the hex currently shown in the UI
 
 // ---- Init ----------------------------------------------------------------
 
@@ -104,13 +105,10 @@ async function handlePickResult(hex) {
   const panel = document.getElementById(PANEL_ID);
   setColorFromHex(panel, hex);
 
-  const copied = await writeToClipboard(hex.toUpperCase());
+  const copied = await writeToClipboard((currentDisplayHex ?? hex).toUpperCase());
   if (copied) flashCopiedBadge(panel);
 
-  const history = await loadFromStorage(HISTORY_KEY, []);
-  const updated = [hex, ...history.filter((c) => c.toLowerCase() !== hex.toLowerCase())].slice(0, HISTORY_MAX);
-  await saveToStorage(HISTORY_KEY, updated);
-  renderHistory(panel, updated);
+  await addToHistory(panel, currentDisplayHex ?? hex);
 }
 
 // ---- State → display -----------------------------------------------------
@@ -135,6 +133,7 @@ function setColorFromHex(panel, hex) {
 async function applyStateToDisplay(panel, copyToClipboard) {
   const { r, g, b } = hslToRgb(state.h, state.s, state.l);
   const hex = rgbToHex(r, g, b);
+  currentDisplayHex = hex;
   const rgba = { r, g, b, a: 255 };
 
   const swatch = panel.querySelector('.cp-swatch');
@@ -355,18 +354,21 @@ function renderHistory(panel, history) {
 }
 
 async function saveCurrentToHistory(panel) {
-  if (!hasColor) return;
-  const { r, g, b } = hslToRgb(state.h, state.s, state.l);
-  const hex = rgbToHex(r, g, b);
+  if (!hasColor || !currentDisplayHex) return;
+  await addToHistory(panel, currentDisplayHex);
+  const btn = panel.querySelector('.cp-btn-save');
+  btn.textContent = 'Saved!';
+  setTimeout(() => { btn.textContent = 'Save'; }, 1400);
+}
+
+/**
+ * Adds hex to front of history. If already present, moves it to front.
+ */
+async function addToHistory(panel, hex) {
   const history = await loadFromStorage(HISTORY_KEY, []);
   const updated = [hex, ...history.filter((c) => c.toLowerCase() !== hex.toLowerCase())].slice(0, HISTORY_MAX);
   await saveToStorage(HISTORY_KEY, updated);
   renderHistory(panel, updated);
-
-  // Brief feedback on the button
-  const btn = panel.querySelector('.cp-btn-save');
-  btn.textContent = 'Saved!';
-  setTimeout(() => { btn.textContent = 'Save'; }, 1400);
 }
 
 async function removeFromHistory(panel, hex) {
@@ -380,6 +382,7 @@ async function removeFromHistory(panel, hex) {
 
 function resetColorPicker(panel) {
   hasColor = false;
+  currentDisplayHex = null;
   state = { h: 0, s: 0, l: 50 };
 
   const swatch = panel.querySelector('.cp-swatch');
