@@ -8,13 +8,14 @@
  */
 
 import { initColorPicker } from '../tools/color-picker/color-picker.js';
+import { initDiffChecker } from '../tools/diff-checker/diff-checker.js';
 import { initSettings, ENABLED_TOOLS_KEY } from '../settings/settings.js';
 import { loadFromStorage } from '../shared/storage.js';
 
 // ---- Tool registry ----
 const TOOLS = {
   'color-picker': initColorPicker,
-  // 'contrast':     initContrastChecker,   // future example
+  'diff-checker': initDiffChecker,
 };
 
 // ---- Tab switching ----
