@@ -11,56 +11,61 @@ export function initTimeDiff() {
   const panel = document.getElementById(PANEL_ID);
   panel.innerHTML = getTemplate();
 
-  const startInput = panel.querySelector('.td-start');
-  const endInput = panel.querySelector('.td-end');
-  const swapBtn = panel.querySelector('.td-btn-swap');
-  const nowStartBtn = panel.querySelector('.td-btn-now-start');
-  const nowEndBtn = panel.querySelector('.td-btn-now-end');
-  const clearBtn = panel.querySelector('.td-btn-clear');
+  const startDate = panel.querySelector('.td-start-date');
+  const startTime = panel.querySelector('.td-start-time');
+  const endDate   = panel.querySelector('.td-end-date');
+  const endTime   = panel.querySelector('.td-end-time');
+
+  function getDatetimeValue(dateInput, timeInput) {
+    if (!dateInput.value) return '';
+    const time = timeInput.value || '00:00';
+    return `${dateInput.value}T${time}`;
+  }
 
   function update() {
-    const startVal = startInput.value;
-    const endVal = endInput.value;
+    const startVal = getDatetimeValue(startDate, startTime);
+    const endVal   = getDatetimeValue(endDate, endTime);
     renderResults(panel, startVal, endVal);
   }
 
-  startInput.addEventListener('input', update);
-  endInput.addEventListener('input', update);
+  [startDate, startTime, endDate, endTime].forEach(el => el.addEventListener('input', update));
 
-  swapBtn.addEventListener('click', () => {
-    const tmp = startInput.value;
-    startInput.value = endInput.value;
-    endInput.value = tmp;
+  panel.querySelector('.td-btn-swap').addEventListener('click', () => {
+    const tmpDate = startDate.value;
+    const tmpTime = startTime.value;
+    startDate.value = endDate.value;
+    startTime.value = endTime.value;
+    endDate.value = tmpDate;
+    endTime.value = tmpTime;
     update();
   });
 
-  nowStartBtn.addEventListener('click', () => {
-    startInput.value = toLocalDatetimeValue(new Date());
+  panel.querySelector('.td-btn-now-start').addEventListener('click', () => {
+    const { date, time } = toLocalParts(new Date());
+    startDate.value = date;
+    startTime.value = time;
     update();
   });
 
-  nowEndBtn.addEventListener('click', () => {
-    endInput.value = toLocalDatetimeValue(new Date());
+  panel.querySelector('.td-btn-now-end').addEventListener('click', () => {
+    const { date, time } = toLocalParts(new Date());
+    endDate.value = date;
+    endTime.value = time;
     update();
   });
 
-  clearBtn.addEventListener('click', () => {
-    startInput.value = '';
-    endInput.value = '';
+  panel.querySelector('.td-btn-clear').addEventListener('click', () => {
+    [startDate, startTime, endDate, endTime].forEach(el => { el.value = ''; });
     renderResults(panel, '', '');
   });
 }
 
-function toLocalDatetimeValue(date) {
-  // Returns "YYYY-MM-DDTHH:MM" in local time for datetime-local input
+function toLocalParts(date) {
   const pad = (n) => String(n).padStart(2, '0');
-  return (
-    date.getFullYear() +
-    '-' + pad(date.getMonth() + 1) +
-    '-' + pad(date.getDate()) +
-    'T' + pad(date.getHours()) +
-    ':' + pad(date.getMinutes())
-  );
+  return {
+    date: `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`,
+    time: `${pad(date.getHours())}:${pad(date.getMinutes())}`,
+  };
 }
 
 function renderResults(panel, startVal, endVal) {
@@ -142,17 +147,23 @@ function getTemplate() {
     <div class="td-container">
       <div class="td-inputs">
         <div class="td-field">
-          <label class="td-label" for="td-start">Start</label>
-          <div class="td-input-row">
-            <input class="td-input td-start" id="td-start" type="datetime-local" />
+          <div class="td-field-header">
+            <span class="td-label">Start</span>
             <button class="td-btn-now td-btn-now-start" title="Set to now">Now</button>
+          </div>
+          <div class="td-input-row">
+            <input class="td-input td-start-date" id="td-start-date" type="date" />
+            <input class="td-input td-start-time" id="td-start-time" type="time" />
           </div>
         </div>
         <div class="td-field">
-          <label class="td-label" for="td-end">End</label>
-          <div class="td-input-row">
-            <input class="td-input td-end" id="td-end" type="datetime-local" />
+          <div class="td-field-header">
+            <span class="td-label">End</span>
             <button class="td-btn-now td-btn-now-end" title="Set to now">Now</button>
+          </div>
+          <div class="td-input-row">
+            <input class="td-input td-end-date" id="td-end-date" type="date" />
+            <input class="td-input td-end-time" id="td-end-time" type="time" />
           </div>
         </div>
       </div>
