@@ -8,6 +8,8 @@
  */
 
 import { initColorPicker } from '../tools/color-picker/color-picker.js';
+import { initSettings, ENABLED_TOOLS_KEY } from '../settings/settings.js';
+import { loadFromStorage } from '../shared/storage.js';
 
 // ---- Tool registry ----
 const TOOLS = {
@@ -18,9 +20,8 @@ const TOOLS = {
 // ---- Tab switching ----
 document.getElementById('sidebar').addEventListener('click', (e) => {
   const tab = e.target.closest('[data-tool]');
-  if (!tab) return;
+  if (!tab || tab.hidden) return;
 
-  const toolId = tab.dataset.tool;
   const panelId = tab.getAttribute('aria-controls');
 
   // Deactivate all tabs and panels
@@ -49,5 +50,32 @@ document.getElementById('sidebar').addEventListener('keydown', (e) => {
   }
 });
 
-// ---- Init all tools ----
+// ---- Apply enabled/disabled state on load ----
+async function applyEnabledTools() {
+  const enabledTools = await loadFromStorage(ENABLED_TOOLS_KEY, {});
+
+  document.querySelectorAll('[data-tool]:not([data-tool="settings"])').forEach((tab) => {
+    const toolId = tab.dataset.tool;
+    const panelId = tab.getAttribute('aria-controls');
+    const toolPanel = panelId ? document.getElementById(panelId) : null;
+    const disabled = enabledTools[toolId] === false;
+
+    tab.hidden = disabled;
+    if (toolPanel) toolPanel.hidden = disabled;
+
+    // If the active tab is disabled, fall through to the first visible tool or settings
+    if (disabled && tab.classList.contains('sidebar__tab--active')) {
+      tab.classList.remove('sidebar__tab--active');
+      tab.setAttribute('aria-selected', 'false');
+      if (toolPanel) toolPanel.classList.remove('tool-panel--active');
+
+      const firstVisible = document.querySelector('[data-tool]:not([hidden])');
+      firstVisible?.click();
+    }
+  });
+}
+
+// ---- Init ----
+await applyEnabledTools();
 Object.entries(TOOLS).forEach(([, initFn]) => initFn());
+initSettings();

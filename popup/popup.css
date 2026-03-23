@@ -8,6 +8,8 @@
   padding: 0;
 }
 
+[hidden] { display: none !important; }
+
 body {
   width: 380px;
   min-height: 480px;
@@ -92,6 +94,18 @@ body {
   font-weight: 600;
   letter-spacing: 0.3px;
   text-transform: uppercase;
+}
+
+/* Settings tab pinned to bottom */
+.sidebar__bottom {
+  margin-top: auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 8px;
+  border-top: 1px solid #2a2a45;
+  list-style: none;
 }
 
 /* ---- Content area ---- */

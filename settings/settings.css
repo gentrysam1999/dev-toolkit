@@ -1,0 +1,155 @@
+/* ==========================================================================
+   settings.css — All selectors prefixed .st- to avoid collisions
+   ========================================================================== */
+
+.st-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ---- Section ---- */
+.st-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.st-section-title {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* ---- Tool rows ---- */
+.st-tool-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.st-tool-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #16162a;
+  border: 1px solid #2a2a45;
+}
+
+.st-tool-name {
+  font-size: 13px;
+  color: #e2e8f0;
+  font-weight: 500;
+}
+
+.st-empty {
+  font-size: 11px;
+  color: #374151;
+  font-style: italic;
+}
+
+/* ---- Toggle switch ---- */
+.st-toggle {
+  position: relative;
+  display: inline-flex;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.st-toggle-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.st-toggle-track {
+  width: 36px;
+  height: 20px;
+  background: #2a2a45;
+  border-radius: 10px;
+  transition: background 0.2s;
+  position: relative;
+  display: block;
+}
+
+.st-toggle-input:checked + .st-toggle-track {
+  background: #4f46e5;
+}
+
+.st-toggle-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 14px;
+  height: 14px;
+  background: #6b7280;
+  border-radius: 50%;
+  transition: transform 0.2s, background 0.2s;
+  display: block;
+}
+
+.st-toggle-input:checked + .st-toggle-track .st-toggle-thumb {
+  transform: translateX(16px);
+  background: #fff;
+}
+
+.st-toggle-input:focus-visible + .st-toggle-track {
+  outline: 2px solid #818cf8;
+  outline-offset: 2px;
+}
+
+/* ---- Developer section ---- */
+.st-dev-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 10px;
+  border-radius: 8px;
+  background: #16162a;
+  border: 1px solid #2a2a45;
+}
+
+.st-dev-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.st-dev-label {
+  font-size: 13px;
+  color: #e2e8f0;
+  font-weight: 500;
+}
+
+.st-dev-desc {
+  font-size: 10px;
+  color: #4b5563;
+  line-height: 1.4;
+}
+
+.st-btn-reload {
+  padding: 6px 14px;
+  border-radius: 7px;
+  border: 1px solid #78350f;
+  background: transparent;
+  color: #f59e0b;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s;
+}
+
+.st-btn-reload:hover {
+  background: #78350f;
+  color: #fde68a;
+}
