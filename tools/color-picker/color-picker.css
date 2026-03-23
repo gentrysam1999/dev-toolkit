@@ -24,6 +24,19 @@
   transition: background-color 0.2s ease;
 }
 
+/* Checkered pattern shown before any color is picked */
+.cp-swatch--empty {
+  background-color: transparent !important;
+  background-image:
+    linear-gradient(45deg, #2a2a45 25%, transparent 25%),
+    linear-gradient(-45deg, #2a2a45 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #2a2a45 75%),
+    linear-gradient(-45deg, transparent 75%, #2a2a45 75%);
+  background-size: 12px 12px;
+  background-position: 0 0, 0 6px, 6px -6px, -6px 0px;
+  background-color: #1a1a30;
+}
+
 .cp-values {
   display: flex;
   flex-direction: column;
@@ -32,13 +45,42 @@
   min-width: 0;
 }
 
+/* ---- Value rows ---- */
+.cp-value-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+}
+
+.cp-value-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: #4b5563;
+  width: 26px;
+  flex-shrink: 0;
+}
+
 .cp-hex-value {
   font-family: 'Courier New', 'Consolas', monospace;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 700;
   letter-spacing: 1px;
   color: #f1f5f9;
   line-height: 1.2;
+  cursor: pointer;
+  transition: color 0.12s;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cp-hex-value:hover {
+  color: #a5b4fc;
 }
 
 .cp-rgba-value,
@@ -49,6 +91,50 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  cursor: pointer;
+  flex: 1;
+  min-width: 0;
+  transition: color 0.12s;
+}
+
+.cp-rgba-value:hover,
+.cp-hsl-value:hover {
+  color: #cbd5e1;
+}
+
+.cp-copy-btn {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: transparent;
+  color: #374151;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 0;
+  transition: color 0.12s, background 0.12s;
+}
+
+.cp-copy-btn:hover {
+  color: #818cf8;
+  background: #2a2a45;
+}
+
+.cp-row-copied {
+  font-size: 9px;
+  font-weight: 600;
+  color: #34d399;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.cp-row-copied--visible {
+  opacity: 1;
 }
 
 /* ---- Actions ---- */
@@ -86,6 +172,24 @@
   transform: none;
 }
 
+.cp-btn-reset {
+  padding: 7px 12px;
+  border-radius: 7px;
+  border: 1px solid #2a2a45;
+  background: transparent;
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.cp-btn-reset:hover {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
 .cp-copied-badge {
   font-size: 11px;
   font-weight: 600;
@@ -96,6 +200,13 @@
 
 .cp-copied-badge--visible {
   opacity: 1;
+}
+
+/* ---- Divider ---- */
+.cp-divider {
+  height: 1px;
+  background: #2a2a45;
+  margin: 0 -2px;
 }
 
 /* ---- Chart ---- */
@@ -129,6 +240,11 @@
   min-height: 28px;
 }
 
+.cp-history-item {
+  position: relative;
+  flex-shrink: 0;
+}
+
 .cp-history-swatch {
   width: 28px;
   height: 28px;
@@ -136,12 +252,41 @@
   border: 2px solid #2a2a45;
   cursor: pointer;
   transition: transform 0.15s, border-color 0.15s;
-  flex-shrink: 0;
+  display: block;
 }
 
-.cp-history-swatch:hover {
-  transform: scale(1.2);
+.cp-history-item:hover .cp-history-swatch {
   border-color: #818cf8;
+}
+
+.cp-history-remove {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: none;
+  background: #374151;
+  color: #cbd5e1;
+  font-size: 10px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  opacity: 0;
+  transition: opacity 0.15s, background 0.15s;
+}
+
+.cp-history-item:hover .cp-history-remove {
+  opacity: 1;
+}
+
+.cp-history-remove:hover {
+  background: #ef4444;
+  color: #fff;
 }
 
 .cp-history-empty {

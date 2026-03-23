@@ -28,6 +28,16 @@ export async function initColorPicker() {
   // Wire up the pick button
   panel.querySelector('.cp-btn-pick').addEventListener('click', handlePickClick);
 
+  // Wire up the reset button
+  panel.querySelector('.cp-btn-reset').addEventListener('click', () => resetColorPicker(panel));
+
+  // Wire up per-value copy buttons
+  panel.querySelectorAll('.cp-value-row').forEach((row) => {
+    row.querySelector('.cp-copy-btn').addEventListener('click', () => copyValueRow(row));
+    // Also make the value text itself click-to-copy
+    row.querySelector('[class^="cp-"][class*="-value"]:not(.cp-values)').addEventListener('click', () => copyValueRow(row));
+  });
+
   // Load and render saved history
   const history = await loadFromStorage(HISTORY_KEY, []);
   renderHistory(panel, history);
@@ -94,14 +104,51 @@ function displayColor(panel, hex) {
   const rgba = hexToRgba(hex);
   const hsl = rgbToHsl(rgba.r, rgba.g, rgba.b);
 
-  panel.querySelector('.cp-swatch').style.backgroundColor = hex;
+  const swatch = panel.querySelector('.cp-swatch');
+  swatch.style.backgroundColor = hex;
+  swatch.classList.remove('cp-swatch--empty');
+
   panel.querySelector('.cp-hex-value').textContent = hex.toUpperCase();
   panel.querySelector('.cp-rgba-value').textContent = formatRgba(rgba);
   panel.querySelector('.cp-hsl-value').textContent =
     `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
 
+  panel.querySelector('.cp-btn-reset').hidden = false;
+
   const canvas = panel.querySelector('.cp-chart');
   drawColorChart(canvas, hsl.h, hsl.s, hsl.l);
+}
+
+function resetColorPicker(panel) {
+  const swatch = panel.querySelector('.cp-swatch');
+  swatch.style.backgroundColor = '';
+  swatch.classList.add('cp-swatch--empty');
+
+  panel.querySelector('.cp-hex-value').textContent = '#------';
+  panel.querySelector('.cp-rgba-value').textContent = 'rgba(—, —, —, —)';
+  panel.querySelector('.cp-hsl-value').textContent = 'hsl(—, —%, —%)';
+
+  panel.querySelector('.cp-btn-reset').hidden = true;
+
+  drawPlaceholderChart(panel.querySelector('.cp-chart'));
+}
+
+// ---- Per-value copy ------------------------------------------------------
+
+async function copyValueRow(row) {
+  const valueEl = row.querySelector('[class^="cp-"][class*="-value"]:not(.cp-values)');
+  if (!valueEl) return;
+
+  const text = valueEl.textContent.trim();
+  // Don't copy placeholder dashes
+  if (text.includes('—') || text === '#------') return;
+
+  const copied = await writeToClipboard(text);
+  if (!copied) return;
+
+  const badge = row.querySelector('.cp-row-copied');
+  badge.classList.add('cp-row-copied--visible');
+  setTimeout(() => badge.classList.remove('cp-row-copied--visible'), 1400);
 }
 
 // ---- History -------------------------------------------------------------
@@ -116,14 +163,38 @@ function renderHistory(panel, history) {
   }
 
   history.forEach((hex) => {
-    const btn = document.createElement('button');
-    btn.className = 'cp-history-swatch';
-    btn.style.backgroundColor = hex;
-    btn.setAttribute('title', hex.toUpperCase());
-    btn.setAttribute('aria-label', `Reuse color ${hex.toUpperCase()}`);
-    btn.addEventListener('click', () => handlePickResult(hex));
-    container.appendChild(btn);
+    const item = document.createElement('div');
+    item.className = 'cp-history-item';
+
+    const swatch = document.createElement('button');
+    swatch.className = 'cp-history-swatch';
+    swatch.style.backgroundColor = hex;
+    swatch.setAttribute('title', hex.toUpperCase());
+    swatch.setAttribute('aria-label', `Reuse color ${hex.toUpperCase()}`);
+    swatch.addEventListener('click', () => handlePickResult(hex));
+
+    const removeBtn = document.createElement('button');
+    removeBtn.className = 'cp-history-remove';
+    removeBtn.type = 'button';
+    removeBtn.setAttribute('aria-label', `Remove ${hex.toUpperCase()} from history`);
+    removeBtn.setAttribute('title', 'Remove');
+    removeBtn.innerHTML = '×';
+    removeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      removeFromHistory(panel, hex);
+    });
+
+    item.appendChild(swatch);
+    item.appendChild(removeBtn);
+    container.appendChild(item);
   });
+}
+
+async function removeFromHistory(panel, hex) {
+  const history = await loadFromStorage(HISTORY_KEY, []);
+  const updated = history.filter((c) => c.toLowerCase() !== hex.toLowerCase());
+  await saveToStorage(HISTORY_KEY, updated);
+  renderHistory(panel, updated);
 }
 
 // ---- Error ---------------------------------------------------------------
@@ -147,17 +218,46 @@ function getTemplate() {
     <div class="cp-container">
 
       <div class="cp-preview-row">
-        <div class="cp-swatch" style="background:#2a2a45;" aria-hidden="true"></div>
+        <div class="cp-swatch cp-swatch--empty" aria-hidden="true"></div>
         <div class="cp-values">
-          <span class="cp-hex-value" title="Hex value">#------</span>
-          <span class="cp-rgba-value" title="RGBA value">rgba(—, —, —, —)</span>
-          <span class="cp-hsl-value" title="HSL value">hsl(—, —%, —%)</span>
+
+          <div class="cp-value-row" data-copy-target="hex">
+            <span class="cp-value-label">HEX</span>
+            <span class="cp-hex-value">#------</span>
+            <button class="cp-copy-btn" type="button" aria-label="Copy hex value" title="Copy">
+              ${copyIcon()}
+            </button>
+            <span class="cp-row-copied" aria-live="polite">Copied!</span>
+          </div>
+
+          <div class="cp-value-row" data-copy-target="rgba">
+            <span class="cp-value-label">RGB</span>
+            <span class="cp-rgba-value">rgba(—, —, —, —)</span>
+            <button class="cp-copy-btn" type="button" aria-label="Copy RGB value" title="Copy">
+              ${copyIcon()}
+            </button>
+            <span class="cp-row-copied" aria-live="polite">Copied!</span>
+          </div>
+
+          <div class="cp-value-row" data-copy-target="hsl">
+            <span class="cp-value-label">HSL</span>
+            <span class="cp-hsl-value">hsl(—, —%, —%)</span>
+            <button class="cp-copy-btn" type="button" aria-label="Copy HSL value" title="Copy">
+              ${copyIcon()}
+            </button>
+            <span class="cp-row-copied" aria-live="polite">Copied!</span>
+          </div>
+
           <div class="cp-actions">
             <button class="cp-btn-pick" type="button">Pick Color</button>
+            <button class="cp-btn-reset" type="button" hidden aria-label="Reset selection">Reset</button>
             <span class="cp-copied-badge" aria-live="polite">Copied!</span>
           </div>
+
         </div>
       </div>
+
+      <div class="cp-divider"></div>
 
       <canvas class="cp-chart" width="288" height="200" aria-label="Color saturation/lightness chart"></canvas>
 
@@ -168,4 +268,11 @@ function getTemplate() {
 
     </div>
   `;
+}
+
+function copyIcon() {
+  return `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" stroke-width="2"/>
+    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="currentColor" stroke-width="2"/>
+  </svg>`;
 }
