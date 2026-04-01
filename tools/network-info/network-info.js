@@ -12,6 +12,10 @@
  * hitting an external API every 5 s is unnecessary).
  *
  * Note: chrome.system.network is ChromeOS-only and is not used here.
+ *
+ * TODO: Speed test tool — measure real download/upload throughput by fetching
+ * a known-size payload and timing it, rather than relying on the browser's
+ * navigator.connection.downlink estimate (which is rounded and often stale).
  */
 
 import { writeToClipboard } from '../../shared/js/clipboard.js';
