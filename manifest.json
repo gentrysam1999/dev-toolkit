@@ -21,6 +21,11 @@
   "permissions": [
     "clipboardWrite",
     "storage",
-    "tabs"
+    "tabs",
+    "system.network"
+  ],
+  "host_permissions": [
+    "https://api.ipify.org/",
+    "https://api6.ipify.org/"
   ]
 }

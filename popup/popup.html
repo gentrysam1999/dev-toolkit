@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="../tools/time-diff/time-diff.css" />
   <link rel="stylesheet" href="../settings/settings.css" />
   <link rel="stylesheet" href="../tools/diff-checker/diff-checker.css" />
+  <link rel="stylesheet" href="../tools/network-info/network-info.css" />
 </head>
 <body>
   <div class="app">
@@ -72,6 +73,24 @@
           <span class="sidebar__label">Time</span>
         </li>
 
+        <li class="sidebar__tab"
+            role="tab"
+            aria-selected="false"
+            aria-controls="panel-network-info"
+            data-tool="network-info"
+            tabindex="-1"
+            title="Network Info">
+          <!-- Network / globe icon -->
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>
+            <path d="M12 3c-2.5 2.5-4 5.6-4 9s1.5 6.5 4 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M12 3c2.5 2.5 4 5.6 4 9s-1.5 6.5-4 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M3 12h18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M3.6 7.5h16.8M3.6 16.5h16.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <span class="sidebar__label">Net</span>
+        </li>
+
         <!--
           To add a future tool, copy this <li> block, update data-tool,
           aria-controls, the icon SVG, and the label text.
@@ -127,6 +146,13 @@
                role="tabpanel"
                aria-label="Diff Checker">
         <!-- Populated by diff-checker.js -->
+      </section>
+
+      <section class="tool-panel"
+               id="panel-network-info"
+               role="tabpanel"
+               aria-label="Network Info">
+        <!-- Populated by network-info.js -->
       </section>
 
       <!--

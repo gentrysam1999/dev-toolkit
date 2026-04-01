@@ -1,0 +1,201 @@
+/* ==========================================================================
+   network-info.css — All selectors prefixed .ni- to avoid collisions
+   ========================================================================== */
+
+.ni-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 4px 0;
+}
+
+/* ---- Header ---- */
+
+.ni-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ni-title {
+  font-size: var(--text-body);
+  font-weight: var(--weight-semibold);
+  color: var(--text-bright);
+}
+
+.ni-btn-refresh {
+  background: var(--bg-raised);
+  border: var(--border);
+  border-radius: var(--radius-btn);
+  color: var(--accent);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  padding: 4px 10px;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  transition: background var(--t-color), border-color var(--t-color);
+}
+
+.ni-btn-refresh:hover:not(:disabled) {
+  background: var(--bg-active);
+  border-color: var(--accent);
+}
+
+.ni-btn-refresh:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* ---- Sections ---- */
+
+.ni-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ni-section__label {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-label);
+}
+
+/* ---- Rows (public IP + connection) ---- */
+
+.ni-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-raised);
+  border: var(--border);
+  border-radius: var(--radius-md);
+  padding: 7px 10px;
+  min-height: 32px;
+}
+
+.ni-row__label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--text-btn);
+  color: var(--text-secondary);
+  flex: 0 0 auto;
+  min-width: 72px;
+}
+
+.ni-row__value {
+  flex: 1;
+  font-size: var(--text-btn);
+  font-weight: var(--weight-semibold);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  word-break: break-all;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Copy button ---- */
+
+.ni-copy-btn {
+  flex: 0 0 auto;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: var(--radius-sm);
+  line-height: 1;
+  transition: color var(--t-color), background var(--t-color);
+}
+
+.ni-copy-btn:hover {
+  color: var(--accent);
+  background: var(--bg-active);
+}
+
+/* ---- v4 / v6 badges ---- */
+
+.ni-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  border-radius: var(--radius-xs);
+  padding: 1px 4px;
+  line-height: 1.4;
+  letter-spacing: 0.3px;
+  flex: 0 0 auto;
+}
+
+.ni-badge--v4 {
+  background: rgba(99, 102, 241, 0.18);
+  color: var(--accent);
+}
+
+.ni-badge--v6 {
+  background: rgba(52, 211, 153, 0.12);
+  color: var(--green-text);
+}
+
+/* ---- Local interfaces ---- */
+
+.ni-interfaces {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ni-iface {
+  background: var(--bg-raised);
+  border: var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.ni-iface__name {
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  color: var(--accent-soft);
+  padding: 5px 10px 4px;
+  border-bottom: var(--border);
+  background: rgba(129, 140, 248, 0.05);
+  font-family: var(--font-mono);
+  letter-spacing: 0.2px;
+}
+
+.ni-iface__addr {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 10px;
+  border-bottom: var(--border);
+}
+
+.ni-iface__addr:last-child {
+  border-bottom: none;
+}
+
+.ni-iface__addr-text {
+  flex: 1;
+  font-size: var(--text-btn);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  word-break: break-all;
+}
+
+/* ---- States ---- */
+
+.ni-placeholder {
+  font-size: var(--text-btn);
+  color: var(--text-muted);
+  padding: 6px 2px;
+}
+
+.ni-error {
+  font-size: var(--text-btn);
+  color: var(--red);
+  padding: 6px 2px;
+}
