@@ -91,6 +91,8 @@ async function loadLocalInterfaces(panel) {
 
   // Prefer chrome.system.network (requires system.network permission + extension reload).
   // Fall back to WebRTC candidate enumeration, which needs no special permissions.
+  console.log('[network-info] chrome.system:', chrome.system);
+  console.log('[network-info] chrome.system?.network:', chrome.system?.network);
   if (chrome.system?.network) {
     await loadInterfacesViaSystemAPI(container);
   } else {
