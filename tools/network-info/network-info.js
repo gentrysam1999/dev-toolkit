@@ -89,6 +89,16 @@ async function loadLocalInterfaces(panel) {
   const container = panel.querySelector('.ni-interfaces');
   container.innerHTML = '<span class="ni-placeholder">Loading…</span>';
 
+  // Prefer chrome.system.network (requires system.network permission + extension reload).
+  // Fall back to WebRTC candidate enumeration, which needs no special permissions.
+  if (chrome.system?.network) {
+    await loadInterfacesViaSystemAPI(container);
+  } else {
+    await loadInterfacesViaWebRTC(container);
+  }
+}
+
+async function loadInterfacesViaSystemAPI(container) {
   let interfaces;
   try {
     interfaces = await new Promise((resolve) => {
@@ -137,6 +147,70 @@ async function loadLocalInterfaces(panel) {
 
     container.appendChild(ifaceEl);
   }
+}
+
+// Fallback: gather local host-type ICE candidates via WebRTC.
+// Returns addresses without interface names or prefix lengths.
+async function loadInterfacesViaWebRTC(container) {
+  try {
+    const ips = await getLocalIPsViaWebRTC();
+
+    if (ips.length === 0) {
+      container.innerHTML = '<span class="ni-placeholder">No local addresses found</span>';
+      return;
+    }
+
+    container.innerHTML = '';
+    for (const ip of ips) {
+      const isV6  = ip.includes(':');
+      const ifaceEl = document.createElement('div');
+      ifaceEl.className = 'ni-iface';
+      ifaceEl.innerHTML = `
+        <div class="ni-iface__addr" style="padding: 7px 10px;">
+          <span class="ni-badge ${isV6 ? 'ni-badge--v6' : 'ni-badge--v4'}">${isV6 ? 'v6' : 'v4'}</span>
+          <span class="ni-iface__addr-text">${ip}</span>
+          <button class="ni-copy-btn" data-value="${ip}" title="Copy address">⎘</button>
+        </div>
+      `;
+      container.appendChild(ifaceEl);
+    }
+  } catch (e) {
+    container.innerHTML = `<span class="ni-error">Error: ${e.message}</span>`;
+  }
+}
+
+function getLocalIPsViaWebRTC() {
+  return new Promise((resolve, reject) => {
+    const ips = new Set();
+    let pc;
+    try {
+      pc = new RTCPeerConnection({ iceServers: [] });
+    } catch (e) {
+      reject(e);
+      return;
+    }
+
+    pc.createDataChannel('');
+    pc.createOffer()
+      .then((offer) => pc.setLocalDescription(offer))
+      .catch(reject);
+
+    const finish = () => { pc.close(); resolve([...ips]); };
+    const timeout = setTimeout(finish, 2000);
+
+    pc.onicecandidate = (e) => {
+      if (!e.candidate) {
+        clearTimeout(timeout);
+        finish();
+        return;
+      }
+      // Candidate SDP: "candidate:<f> <c> <proto> <pri> <address> <port> typ <type> ..."
+      const parts = e.candidate.candidate.split(' ');
+      const address = parts[4];
+      const type    = parts[7];
+      if (type === 'host' && address) ips.add(address);
+    };
+  });
 }
 
 // ---- Connection info ----
