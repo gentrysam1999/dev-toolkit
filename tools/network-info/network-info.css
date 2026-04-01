@@ -21,6 +21,29 @@
   font-size: var(--text-body);
   font-weight: var(--weight-semibold);
   color: var(--text-bright);
+  flex: 1;
+}
+
+.ni-live {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--text-base);
+  color: var(--green-text);
+  margin-right: 8px;
+}
+
+.ni-live__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: ni-pulse 2s ease-in-out infinite;
+}
+
+@keyframes ni-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
 }
 
 .ni-btn-refresh {

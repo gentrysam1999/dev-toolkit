@@ -7,14 +7,17 @@
  *  - Connection quality metadata (via navigator.connection)
  *  - System info: CPU cores, device memory, display resolution
  *
- * All IP values are copy-to-clipboard on click. Refresh re-fetches everything.
+ * Auto-refreshes local IPs, connection, and system info every 5 s while the panel
+ * is active. Public IPs only re-fetch on manual Refresh (they rarely change and
+ * hitting an external API every 5 s is unnecessary).
  *
  * Note: chrome.system.network is ChromeOS-only and is not used here.
  */
 
 import { writeToClipboard } from '../../shared/js/clipboard.js';
 
-const PANEL_ID = 'panel-network-info';
+const PANEL_ID    = 'panel-network-info';
+const AUTO_INTERVAL_MS = 5000;
 
 export function initNetworkInfo() {
   const panel = document.getElementById(PANEL_ID);
@@ -28,39 +31,90 @@ export function initNetworkInfo() {
     if (value) handleCopy(btn, value);
   });
 
-  panel.querySelector('.ni-btn-refresh').addEventListener('click', () => loadAll(panel));
-  loadAll(panel);
+  panel.querySelector('.ni-btn-refresh').addEventListener('click', () => fullRefresh(panel));
+
+  // Start/stop auto-refresh based on whether this panel is the active tab.
+  let autoTimer = null;
+
+  const startAuto = () => {
+    if (autoTimer) return;
+    autoTimer = setInterval(() => autoRefresh(panel), AUTO_INTERVAL_MS);
+    panel.querySelector('.ni-live').hidden = false;
+  };
+
+  const stopAuto = () => {
+    clearInterval(autoTimer);
+    autoTimer = null;
+    panel.querySelector('.ni-live').hidden = true;
+  };
+
+  new MutationObserver(() => {
+    if (panel.classList.contains('tool-panel--active')) {
+      startAuto();
+    } else {
+      stopAuto();
+    }
+  }).observe(panel, { attributeFilter: ['class'] });
+
+  // Initial full load (includes public IPs).
+  fullRefresh(panel);
+  startAuto();
 }
 
-// ---- Orchestration ----
+// ---- Full refresh (manual button + initial load) ----
+// Fetches everything including public IPs from external API.
 
-async function loadAll(panel) {
+async function fullRefresh(panel) {
   const refreshBtn = panel.querySelector('.ni-btn-refresh');
   refreshBtn.disabled = true;
   refreshBtn.textContent = 'Refreshing…';
 
-  // Run network fetches in parallel; capture public IPs to deduplicate locals.
   const [publicIPs] = await Promise.all([
     loadPublicIPs(panel),
     loadLocalInterfaces(panel),
   ]);
-
-  // Remove local entries that are already shown as public IPs (globally-routable IPv6).
-  panel.querySelectorAll('.ni-interfaces .ni-copy-btn').forEach((btn) => {
-    if (publicIPs.has(btn.dataset.value)) btn.closest('.ni-iface').remove();
-  });
-
-  // If dedup removed everything, show placeholder.
-  const ifacesContainer = panel.querySelector('.ni-interfaces');
-  if (!ifacesContainer.querySelector('.ni-iface')) {
-    ifacesContainer.innerHTML = '<span class="ni-placeholder">No private addresses found</span>';
-  }
+  deduplicateLocalIPs(panel, publicIPs);
 
   loadConnectionInfo(panel);
   loadSystemInfo(panel);
 
   refreshBtn.disabled = false;
   refreshBtn.textContent = 'Refresh';
+}
+
+// ---- Auto-refresh (no external API calls) ----
+// Re-reads local IPs, connection, and system. Deduplicates against the
+// public IPs already shown (read from existing data-value attributes).
+
+async function autoRefresh(panel) {
+  await loadLocalInterfaces(panel);
+  deduplicateLocalIPs(panel, getDisplayedPublicIPs(panel));
+  loadConnectionInfo(panel);
+  loadSystemInfo(panel);
+}
+
+// ---- Helpers ----
+
+// Read the public IPs already displayed (avoids re-fetching).
+function getDisplayedPublicIPs(panel) {
+  const ips = new Set();
+  const v4 = panel.querySelector('.ni-copy-v4')?.dataset.value;
+  const v6 = panel.querySelector('.ni-copy-v6')?.dataset.value;
+  if (v4) ips.add(v4);
+  if (v6) ips.add(v6);
+  return ips;
+}
+
+// Remove local interface entries whose IP is already shown as a public IP.
+function deduplicateLocalIPs(panel, publicIPs) {
+  panel.querySelectorAll('.ni-interfaces .ni-copy-btn').forEach((btn) => {
+    if (publicIPs.has(btn.dataset.value)) btn.closest('.ni-iface').remove();
+  });
+
+  const container = panel.querySelector('.ni-interfaces');
+  if (!container.querySelector('.ni-iface')) {
+    container.innerHTML = '<span class="ni-placeholder">No private addresses found</span>';
+  }
 }
 
 // ---- Public IPs ----
@@ -112,7 +166,6 @@ async function loadPublicIPs(panel) {
 
 async function loadLocalInterfaces(panel) {
   const container = panel.querySelector('.ni-interfaces');
-  container.innerHTML = '<span class="ni-placeholder">Loading…</span>';
 
   try {
     const ips = await getLocalIPsViaWebRTC();
@@ -205,7 +258,7 @@ function loadSystemInfo(panel) {
   const container = panel.querySelector('.ni-system');
 
   const cores  = navigator.hardwareConcurrency;
-  const mem    = navigator.deviceMemory;       // GB, rounded; undefined if unsupported
+  const mem    = navigator.deviceMemory;
   const res    = `${screen.width} × ${screen.height}`;
   const dpr    = window.devicePixelRatio;
   const phyRes = dpr !== 1
@@ -213,11 +266,11 @@ function loadSystemInfo(panel) {
     : null;
 
   const rows = [
-    ['CPU Cores',   cores != null ? `${cores} logical` : '—'],
-    ['Device RAM',  mem   != null ? `${mem} GB`        : '—'],
-    ['Resolution',  res],
-    ...(phyRes ? [['Physical',  phyRes]] : []),
-    ['DPI Scale',   `${dpr}×`],
+    ['CPU Cores',  cores != null ? `${cores} logical` : '—'],
+    ['Device RAM', mem   != null ? `${mem} GB`        : '—'],
+    ['Resolution', res],
+    ...(phyRes ? [['Physical', phyRes]] : []),
+    ['DPI Scale',  `${dpr}×`],
   ];
 
   container.innerHTML = rows.map(([label, value]) => `
@@ -247,6 +300,9 @@ function getTemplate() {
 
       <div class="ni-header">
         <span class="ni-title">System & Network</span>
+        <span class="ni-live" hidden title="Auto-refreshing every 5 s">
+          <span class="ni-live__dot"></span>Live
+        </span>
         <button class="ni-btn-refresh">Refresh</button>
       </div>
 
