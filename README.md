@@ -6,6 +6,7 @@ A personal Chrome extension for web developers. Built to be expanded — new too
 - Color Picker
 - Diff Checker
 - Time Diff
+- System & Network
 
 ---
 
@@ -70,6 +71,28 @@ Calculate the difference between two datetimes.
 4. A direction label tells you whether end is after, before, or equal to start — negative differences are shown with a `−` prefix
 5. Use **Swap** to reverse start and end, or **Clear** to reset both fields
 
+### System & Network
+
+View live network and system information. Data refreshes automatically every 5 seconds while the panel is open. Click **Refresh** to manually re-fetch everything including public IPs.
+
+**Public IP** — your external IPv4 and IPv6 addresses, fetched from [ipify.org](https://www.ipify.org). Click the copy button next to either address to copy it to your clipboard.
+
+**Local Interfaces** — active local IP addresses discovered via WebRTC. Globally-routable IPv6 addresses (which are the same as your public IP) are automatically filtered out so they only appear once.
+
+**Connection** — live connection metadata from the browser:
+- Online status
+- Effective connection type (4G, 3G, etc.)
+- Estimated downlink speed — Chrome's own estimate based on recent traffic, rounded to the nearest 25 kbps
+- Round-trip time (RTT)
+- Save Data mode on/off
+
+**System** — hardware and display info:
+- Logical CPU core count
+- Device RAM (approximate, Chrome reports the nearest power of 2 up to 8 GB)
+- Screen resolution (logical pixels)
+- Physical resolution (shown when DPI scaling is active)
+- DPI scale factor
+
 ---
 
 ## Settings
@@ -97,6 +120,7 @@ popup/                     Popup shell: sidebar nav + panel layout
 tools/color-picker/        Color picker tool
 tools/diff-checker/        Diff checker tool (includes full-tab view)
 tools/time-diff/           Time diff tool
+tools/network-info/        System & Network tool
 settings/                  Settings panel
 shared/                    Shared utilities (color math, clipboard, storage, canvas chart)
 icons/                     Extension icons
@@ -104,3 +128,9 @@ docs/                      Planning and roadmap documents
 ```
 
 Adding a new tool only requires creating a folder under `tools/`, adding a sidebar tab and panel slot in `popup.html`, and registering an init function in `popup.js`. See `CLAUDE.md` for details.
+
+---
+
+## Planned features
+
+- **Speed test** — measure real download throughput by fetching a known-size payload and timing it, rather than relying on the browser's `navigator.connection.downlink` estimate (which is rounded and can be stale).
