@@ -155,16 +155,6 @@
   overflow: hidden;
 }
 
-.ni-iface__name {
-  font-size: var(--text-base);
-  font-weight: var(--weight-semibold);
-  color: var(--accent-soft);
-  padding: 5px 10px 4px;
-  border-bottom: var(--border);
-  background: rgba(129, 140, 248, 0.05);
-  font-family: var(--font-mono);
-  letter-spacing: 0.2px;
-}
 
 .ni-iface__addr {
   display: flex;

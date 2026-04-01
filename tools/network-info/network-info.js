@@ -3,10 +3,12 @@
  *
  * Shows:
  *  - Public IPv4 and IPv6 (via api.ipify.org / api6.ipify.org)
- *  - Local network interfaces with addresses (via chrome.system.network)
+ *  - Local IP addresses (via WebRTC ICE candidate enumeration — no special permissions needed)
  *  - Connection quality metadata (via navigator.connection)
  *
  * All IP values are copy-to-clipboard on click. Refresh re-fetches everything.
+ *
+ * Note: chrome.system.network is ChromeOS-only and is not used here.
  */
 
 import { writeToClipboard } from '../../shared/js/clipboard.js';
@@ -74,7 +76,7 @@ async function loadPublicIPs(panel) {
 
   if (v6Result.status === 'fulfilled') {
     const ip = v6Result.value.ip;
-    // api6.ipify may return IPv4 if host has no IPv6 — skip if same as v4
+    // api6.ipify may return IPv4 if host has no IPv6 — skip if so
     const isV6 = ip.includes(':');
     v6El.textContent = isV6 ? ip : 'Not available';
     if (isV6) v6Btn.dataset.value = ip;
@@ -83,77 +85,12 @@ async function loadPublicIPs(panel) {
   }
 }
 
-// ---- Local interfaces ----
+// ---- Local interfaces (WebRTC) ----
 
 async function loadLocalInterfaces(panel) {
   const container = panel.querySelector('.ni-interfaces');
   container.innerHTML = '<span class="ni-placeholder">Loading…</span>';
 
-  // Prefer chrome.system.network (requires system.network permission + extension reload).
-  // Fall back to WebRTC candidate enumeration, which needs no special permissions.
-  console.log('[network-info] chrome.system:', chrome.system);
-  console.log('[network-info] chrome.system?.network:', chrome.system?.network);
-  if (chrome.system?.network) {
-    await loadInterfacesViaSystemAPI(container);
-  } else {
-    await loadInterfacesViaWebRTC(container);
-  }
-}
-
-async function loadInterfacesViaSystemAPI(container) {
-  let interfaces;
-  try {
-    interfaces = await new Promise((resolve) => {
-      chrome.system.network.getNetworkInterfaces(resolve);
-    });
-  } catch (e) {
-    container.innerHTML = `<span class="ni-error">Error: ${e.message}</span>`;
-    return;
-  }
-
-  if (!interfaces || interfaces.length === 0) {
-    container.innerHTML = '<span class="ni-placeholder">No interfaces found</span>';
-    return;
-  }
-
-  // Group addresses by interface name
-  const grouped = new Map();
-  for (const iface of interfaces) {
-    if (!grouped.has(iface.name)) grouped.set(iface.name, []);
-    grouped.get(iface.name).push(iface);
-  }
-
-  container.innerHTML = '';
-  for (const [name, addrs] of grouped) {
-    const ifaceEl = document.createElement('div');
-    ifaceEl.className = 'ni-iface';
-
-    const nameEl = document.createElement('div');
-    nameEl.className = 'ni-iface__name';
-    nameEl.textContent = name;
-    ifaceEl.appendChild(nameEl);
-
-    for (const addr of addrs) {
-      const isV6    = addr.address.includes(':');
-      const display = `${addr.address}/${addr.prefixLength}`;
-
-      const addrEl = document.createElement('div');
-      addrEl.className = 'ni-iface__addr';
-      addrEl.innerHTML = `
-        <span class="ni-badge ${isV6 ? 'ni-badge--v6' : 'ni-badge--v4'}">${isV6 ? 'v6' : 'v4'}</span>
-        <span class="ni-iface__addr-text">${display}</span>
-        <button class="ni-copy-btn" data-value="${addr.address}" title="Copy address">⎘</button>
-      `;
-      ifaceEl.appendChild(addrEl);
-    }
-
-    container.appendChild(ifaceEl);
-  }
-}
-
-// Fallback: gather local host-type ICE candidates via WebRTC.
-// Returns addresses without interface names or prefix lengths.
-async function loadInterfacesViaWebRTC(container) {
   try {
     const ips = await getLocalIPsViaWebRTC();
 
@@ -164,11 +101,11 @@ async function loadInterfacesViaWebRTC(container) {
 
     container.innerHTML = '';
     for (const ip of ips) {
-      const isV6  = ip.includes(':');
+      const isV6   = ip.includes(':');
       const ifaceEl = document.createElement('div');
       ifaceEl.className = 'ni-iface';
       ifaceEl.innerHTML = `
-        <div class="ni-iface__addr" style="padding: 7px 10px;">
+        <div class="ni-iface__addr">
           <span class="ni-badge ${isV6 ? 'ni-badge--v6' : 'ni-badge--v4'}">${isV6 ? 'v6' : 'v4'}</span>
           <span class="ni-iface__addr-text">${ip}</span>
           <button class="ni-copy-btn" data-value="${ip}" title="Copy address">⎘</button>
@@ -181,6 +118,8 @@ async function loadInterfacesViaWebRTC(container) {
   }
 }
 
+// Enumerate local host-type ICE candidates via WebRTC.
+// Requires no special permissions; works on all platforms.
 function getLocalIPsViaWebRTC() {
   return new Promise((resolve, reject) => {
     const ips = new Set();
@@ -222,11 +161,11 @@ function loadConnectionInfo(panel) {
   const conn = navigator.connection;
 
   const rows = [
-    ['Online',     navigator.onLine ? 'Yes' : 'No'],
-    ['Type',       conn?.effectiveType?.toUpperCase() ?? '—'],
-    ['Downlink',   conn?.downlink != null ? `${conn.downlink} Mbps` : '—'],
-    ['RTT',        conn?.rtt     != null ? `${conn.rtt} ms`     : '—'],
-    ['Save Data',  conn?.saveData ? 'On' : 'Off'],
+    ['Online',    navigator.onLine ? 'Yes' : 'No'],
+    ['Type',      conn?.effectiveType?.toUpperCase() ?? '—'],
+    ['Downlink',  conn?.downlink != null ? `${conn.downlink} Mbps` : '—'],
+    ['RTT',       conn?.rtt     != null ? `${conn.rtt} ms`     : '—'],
+    ['Save Data', conn?.saveData ? 'On' : 'Off'],
   ];
 
   container.innerHTML = rows.map(([label, value]) => `
