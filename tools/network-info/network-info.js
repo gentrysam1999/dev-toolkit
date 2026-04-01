@@ -5,6 +5,7 @@
  *  - Public IPv4 and IPv6 (via api.ipify.org / api6.ipify.org)
  *  - Local IP addresses (via WebRTC ICE candidate enumeration — no special permissions needed)
  *  - Connection quality metadata (via navigator.connection)
+ *  - System info: CPU cores, device memory, display resolution
  *
  * All IP values are copy-to-clipboard on click. Refresh re-fetches everything.
  *
@@ -38,23 +39,39 @@ async function loadAll(panel) {
   refreshBtn.disabled = true;
   refreshBtn.textContent = 'Refreshing…';
 
-  await Promise.all([
+  // Run network fetches in parallel; capture public IPs to deduplicate locals.
+  const [publicIPs] = await Promise.all([
     loadPublicIPs(panel),
     loadLocalInterfaces(panel),
   ]);
+
+  // Remove local entries that are already shown as public IPs (globally-routable IPv6).
+  panel.querySelectorAll('.ni-interfaces .ni-copy-btn').forEach((btn) => {
+    if (publicIPs.has(btn.dataset.value)) btn.closest('.ni-iface').remove();
+  });
+
+  // If dedup removed everything, show placeholder.
+  const ifacesContainer = panel.querySelector('.ni-interfaces');
+  if (!ifacesContainer.querySelector('.ni-iface')) {
+    ifacesContainer.innerHTML = '<span class="ni-placeholder">No private addresses found</span>';
+  }
+
   loadConnectionInfo(panel);
+  loadSystemInfo(panel);
 
   refreshBtn.disabled = false;
   refreshBtn.textContent = 'Refresh';
 }
 
 // ---- Public IPs ----
+// Returns a Set of successfully resolved public IP strings.
 
 async function loadPublicIPs(panel) {
   const v4El  = panel.querySelector('.ni-public-v4');
   const v6El  = panel.querySelector('.ni-public-v6');
   const v4Btn = panel.querySelector('.ni-copy-v4');
   const v6Btn = panel.querySelector('.ni-copy-v6');
+  const publicIPs = new Set();
 
   v4El.textContent = '…';
   v6El.textContent = '…';
@@ -70,6 +87,7 @@ async function loadPublicIPs(panel) {
     const ip = v4Result.value.ip;
     v4El.textContent = ip;
     v4Btn.dataset.value = ip;
+    publicIPs.add(ip);
   } else {
     v4El.textContent = 'Unavailable';
   }
@@ -79,10 +97,15 @@ async function loadPublicIPs(panel) {
     // api6.ipify may return IPv4 if host has no IPv6 — skip if so
     const isV6 = ip.includes(':');
     v6El.textContent = isV6 ? ip : 'Not available';
-    if (isV6) v6Btn.dataset.value = ip;
+    if (isV6) {
+      v6Btn.dataset.value = ip;
+      publicIPs.add(ip);
+    }
   } else {
     v6El.textContent = 'Not available';
   }
+
+  return publicIPs;
 }
 
 // ---- Local interfaces (WebRTC) ----
@@ -101,7 +124,7 @@ async function loadLocalInterfaces(panel) {
 
     container.innerHTML = '';
     for (const ip of ips) {
-      const isV6   = ip.includes(':');
+      const isV6    = ip.includes(':');
       const ifaceEl = document.createElement('div');
       ifaceEl.className = 'ni-iface';
       ifaceEl.innerHTML = `
@@ -176,6 +199,35 @@ function loadConnectionInfo(panel) {
   `).join('');
 }
 
+// ---- System info ----
+
+function loadSystemInfo(panel) {
+  const container = panel.querySelector('.ni-system');
+
+  const cores  = navigator.hardwareConcurrency;
+  const mem    = navigator.deviceMemory;       // GB, rounded; undefined if unsupported
+  const res    = `${screen.width} × ${screen.height}`;
+  const dpr    = window.devicePixelRatio;
+  const phyRes = dpr !== 1
+    ? `${Math.round(screen.width * dpr)} × ${Math.round(screen.height * dpr)} (physical)`
+    : null;
+
+  const rows = [
+    ['CPU Cores',   cores != null ? `${cores} logical` : '—'],
+    ['Device RAM',  mem   != null ? `${mem} GB`        : '—'],
+    ['Resolution',  res],
+    ...(phyRes ? [['Physical',  phyRes]] : []),
+    ['DPI Scale',   `${dpr}×`],
+  ];
+
+  container.innerHTML = rows.map(([label, value]) => `
+    <div class="ni-row">
+      <span class="ni-row__label">${label}</span>
+      <span class="ni-row__value">${value}</span>
+    </div>
+  `).join('');
+}
+
 // ---- Copy helper ----
 
 async function handleCopy(btn, value) {
@@ -229,6 +281,12 @@ function getTemplate() {
       <div class="ni-section">
         <div class="ni-section__label">Connection</div>
         <div class="ni-connection"></div>
+      </div>
+
+      <!-- System -->
+      <div class="ni-section">
+        <div class="ni-section__label">System</div>
+        <div class="ni-system"></div>
       </div>
 
     </div>
