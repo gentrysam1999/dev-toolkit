@@ -246,7 +246,7 @@ function getTemplate() {
     <div class="ni-container">
 
       <div class="ni-header">
-        <span class="ni-title">Network Info</span>
+        <span class="ni-title">System & Network</span>
         <button class="ni-btn-refresh">Refresh</button>
       </div>
 
