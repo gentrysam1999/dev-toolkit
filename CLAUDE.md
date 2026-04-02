@@ -76,6 +76,21 @@ The color picker (`tools/color-picker/`) maintains HSL as its source of truth in
 - `popup.js` reads this on load and sets `tab.hidden` / `panel.hidden` accordingly.
 - `settings.js` imports `ENABLED_TOOLS_KEY` from itself and is also imported by `popup.js`.
 
+## System & Network tool
+
+- Local IPs are discovered via `RTCPeerConnection` host ICE candidates (no special permissions needed). `chrome.system.network` is **ChromeOS-only** — do not use it on cross-platform builds.
+- Public IPs are fetched from `api.ipify.org` (IPv4) and `api6.ipify.org` (IPv6). These require the `host_permissions` entries in `manifest.json`.
+- Auto-refresh runs every 5 s via `setInterval` while the panel is active. A `MutationObserver` on the panel's `class` attribute starts/stops the timer. Manual Refresh additionally re-fetches public IPs.
+- Both refresh paths share `refreshLive(panel)` — add anything that should run on every refresh there, not separately in each path.
+- Globally-routable IPv6 addresses appear in both WebRTC candidates and the public IP fetch. Post-fetch deduplication removes them from Local Interfaces so they only show once.
+
 ## Permissions
 
-Current: `clipboardWrite`, `storage`. No host permissions, no content scripts, no background service worker.
+Current: `clipboardWrite`, `storage`, `tabs`. Host permissions: `https://api.ipify.org/`, `https://api6.ipify.org/`. No content scripts, no background service worker.
+
+## Documentation maintenance
+
+Keep these two files up to date whenever tools are added, changed, or new feature ideas arise — do not put feature notes or TODOs in source code comments:
+
+- **`README.md`** — update the current tools list and the **Planned features** section at the bottom.
+- **`docs/ROADMAP.md`** — mark completed tools in the Existing Tools table and add new feature ideas under the appropriate section. This is the primary place for tracking what's been built and what's planned.
