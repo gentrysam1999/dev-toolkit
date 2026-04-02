@@ -94,3 +94,5 @@ Keep these two files up to date whenever tools are added, changed, or new featur
 
 - **`README.md`** — update the current tools list and the **Planned features** section at the bottom.
 - **`docs/ROADMAP.md`** — mark completed tools in the Existing Tools table and add new feature ideas under the appropriate section. This is the primary place for tracking what's been built and what's planned.
+
+Source code comments are fine for explaining implementation detail. Feature ideas and planned work belong in the docs above, not as TODOs in source files.
