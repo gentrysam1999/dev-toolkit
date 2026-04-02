@@ -74,23 +74,28 @@ async function fullRefresh(panel) {
     loadLocalInterfaces(panel),
   ]);
   deduplicateLocalIPs(panel, publicIPs);
-
-  loadConnectionInfo(panel);
-  loadSystemInfo(panel);
+  await refreshLive(panel);
 
   refreshBtn.disabled = false;
   refreshBtn.textContent = 'Refresh';
 }
 
 // ---- Auto-refresh (no external API calls) ----
-// Re-reads local IPs, connection, and system. Deduplicates against the
+// Re-reads local IPs, connection, and display. Deduplicates against the
 // public IPs already shown (read from existing data-value attributes).
 
 async function autoRefresh(panel) {
   await loadLocalInterfaces(panel);
   deduplicateLocalIPs(panel, getDisplayedPublicIPs(panel));
+  await refreshLive(panel);
+}
+
+// ---- Shared live data (called by both full and auto refresh) ----
+// Add anything here that should always be kept up to date.
+
+async function refreshLive(panel) {
   loadConnectionInfo(panel);
-  loadSystemInfo(panel);
+  await loadSystemInfo(panel);
 }
 
 // ---- Helpers ----
