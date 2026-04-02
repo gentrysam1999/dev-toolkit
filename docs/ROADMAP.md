@@ -13,6 +13,7 @@ A living document for feature ideas and potential new tools. Nothing here is com
 | Diff Checker | ✅ Done |
 | Settings | ✅ Done |
 | System & Network | ✅ Done |
+| Speed Test | ✅ Done |
 
 ---
 
@@ -21,8 +22,8 @@ A living document for feature ideas and potential new tools. Nothing here is com
 ### System & Network ✅
 Live view of public IPv4/IPv6 (via ipify), local IP addresses (via WebRTC ICE candidate enumeration), connection quality (type, downlink estimate, RTT, save-data mode), and display info (screen resolution, physical resolution, DPI scale, browser window size). Auto-refreshes every 5 seconds while the panel is active; manual Refresh re-fetches public IPs.
 
-### Speed Test
-Measure real download throughput by fetching a known-size payload from a CDN and timing it — gives an accurate per-session result rather than relying on the browser's `navigator.connection.downlink` estimate, which is rounded to the nearest 25 kbps and based on recent passive traffic rather than an active measurement.
+### Speed Test ✅
+Measures real download throughput by streaming a 10 MB payload from Cloudflare CDN. A 500 KB warm-up fetch establishes the TCP connection first; the timed 10 MB stream gives an active per-session Mbps reading. Results include elapsed time and a quality rating (Excellent / Good / Moderate / Slow). Requires `https://speed.cloudflare.com/` host permission.
 
 ---
 

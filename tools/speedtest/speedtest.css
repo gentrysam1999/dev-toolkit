@@ -1,0 +1,170 @@
+/* ==========================================================================
+   speedtest.css — All selectors prefixed .sp- to avoid collisions
+   ========================================================================== */
+
+.sp-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 4px 0;
+}
+
+/* ---- Header ---- */
+
+.sp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sp-title {
+  font-size: var(--text-body);
+  font-weight: var(--weight-semibold);
+  color: var(--text-bright);
+}
+
+.sp-btn-run {
+  background: var(--accent-strong);
+  border: none;
+  border-radius: var(--radius-btn);
+  color: #fff;
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  padding: var(--btn-pad-secondary);
+  cursor: pointer;
+  font-family: var(--font-ui);
+  transition: background var(--t-color);
+}
+
+.sp-btn-run:hover:not(:disabled) {
+  background: var(--accent-strong-hover);
+}
+
+.sp-btn-run:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* ---- Status ---- */
+
+.sp-status {
+  font-size: var(--text-btn);
+  color: var(--text-secondary);
+}
+
+/* ---- Progress bar ---- */
+
+.sp-progress-track {
+  height: 6px;
+  background: var(--bg-raised);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.sp-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--accent-strong);
+  border-radius: 3px;
+  transition: width 0.12s ease;
+}
+
+.sp-progress-fill--done {
+  background: var(--green);
+}
+
+/* ---- Result display ---- */
+
+.sp-result {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  justify-content: center;
+  padding: 16px 0 4px;
+}
+
+.sp-result-value {
+  font-size: 52px;
+  font-weight: var(--weight-bold);
+  color: var(--text-bright);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.sp-result-unit {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-medium);
+  color: var(--text-secondary);
+}
+
+.sp-result-label {
+  text-align: center;
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-label);
+  margin-top: -8px;
+}
+
+/* ---- Details ---- */
+
+.sp-details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sp-section__label {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-label);
+  margin-bottom: 2px;
+}
+
+.sp-detail-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-raised);
+  border: var(--border);
+  border-radius: var(--radius-md);
+  padding: 7px 10px;
+}
+
+.sp-detail-key {
+  font-size: var(--text-btn);
+  color: var(--text-secondary);
+  flex: 0 0 auto;
+  min-width: 64px;
+}
+
+.sp-detail-duration,
+.sp-detail-bytes {
+  flex: 1;
+  font-size: var(--text-btn);
+  font-weight: var(--weight-semibold);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.sp-detail-rating {
+  flex: 1;
+  font-size: var(--text-btn);
+  font-weight: var(--weight-semibold);
+}
+
+.sp-rating--excellent { color: var(--green-text); }
+.sp-rating--good      { color: var(--accent); }
+.sp-rating--moderate  { color: var(--amber); }
+.sp-rating--slow      { color: var(--red-text); }
+
+/* ---- Note ---- */
+
+.sp-note {
+  font-size: var(--text-base);
+  color: var(--text-ghost);
+  padding: 4px 0;
+}

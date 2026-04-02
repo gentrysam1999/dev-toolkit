@@ -7,6 +7,7 @@ A personal Chrome extension for web developers. Built to be expanded — new too
 - Diff Checker
 - Time Diff
 - System & Network
+- Speed Test
 
 ---
 
@@ -71,6 +72,15 @@ Calculate the difference between two datetimes.
 4. A direction label tells you whether end is after, before, or equal to start — negative differences are shown with a `−` prefix
 5. Use **Swap** to reverse start and end, or **Clear** to reset both fields
 
+### Speed Test
+
+Measure your real download throughput by fetching a 10 MB payload from Cloudflare CDN and timing the stream — gives a per-session active measurement rather than relying on the browser's `navigator.connection.downlink` estimate (which is rounded and based on passive traffic).
+
+1. Click **Run Test**
+2. A 500 KB warm-up fetch establishes the TCP connection (result discarded)
+3. A 10 MB timed download measures actual throughput
+4. Results show download speed in Mbps, elapsed time, and a quality rating (Excellent / Good / Moderate / Slow)
+
 ### System & Network
 
 View live network and system information. Data refreshes automatically every 5 seconds while the panel is open. Click **Refresh** to manually re-fetch everything including public IPs.
@@ -120,6 +130,7 @@ tools/color-picker/        Color picker tool
 tools/diff-checker/        Diff checker tool (includes full-tab view)
 tools/time-diff/           Time diff tool
 tools/network-info/        System & Network tool
+tools/speedtest/           Speed Test tool
 settings/                  Settings panel
 shared/                    Shared utilities (color math, clipboard, storage, canvas chart)
 icons/                     Extension icons
@@ -132,4 +143,4 @@ Adding a new tool only requires creating a folder under `tools/`, adding a sideb
 
 ## Planned features
 
-- **Speed test** — measure real download throughput by fetching a known-size payload and timing it, rather than relying on the browser's `navigator.connection.downlink` estimate (which is rounded and can be stale).
+- **Contrast Checker** — check foreground/background colour pairs against WCAG 2.1 AA and AAA thresholds.

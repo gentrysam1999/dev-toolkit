@@ -25,6 +25,7 @@
   ],
   "host_permissions": [
     "https://api.ipify.org/",
-    "https://api6.ipify.org/"
+    "https://api6.ipify.org/",
+    "https://speed.cloudflare.com/"
   ]
 }
