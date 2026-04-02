@@ -19,7 +19,7 @@ A living document for feature ideas and potential new tools. Nothing here is com
 ## Network & System Tools
 
 ### System & Network ✅
-Live view of public IPv4/IPv6 (via ipify), local IP addresses (via WebRTC ICE candidate enumeration), connection quality (type, downlink estimate, RTT, save-data mode), and system hardware info (CPU cores, device RAM, screen resolution, DPI scale). Auto-refreshes every 5 seconds while the panel is active; manual Refresh re-fetches public IPs.
+Live view of public IPv4/IPv6 (via ipify), local IP addresses (via WebRTC ICE candidate enumeration), connection quality (type, downlink estimate, RTT, save-data mode), and display info (screen resolution, physical resolution, DPI scale, browser window size). Auto-refreshes every 5 seconds while the panel is active; manual Refresh re-fetches public IPs.
 
 ### Speed Test
 Measure real download throughput by fetching a known-size payload from a CDN and timing it — gives an accurate per-session result rather than relying on the browser's `navigator.connection.downlink` estimate, which is rounded to the nearest 25 kbps and based on recent passive traffic rather than an active measurement.

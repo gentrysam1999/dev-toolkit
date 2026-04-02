@@ -252,25 +252,28 @@ function loadConnectionInfo(panel) {
   `).join('');
 }
 
-// ---- System info ----
+// ---- Display info ----
 
-function loadSystemInfo(panel) {
+async function loadSystemInfo(panel) {
   const container = panel.querySelector('.ni-system');
 
-  const cores  = navigator.hardwareConcurrency;
-  const mem    = navigator.deviceMemory;
-  const res    = `${screen.width} × ${screen.height}`;
   const dpr    = window.devicePixelRatio;
+  const res    = `${screen.width} × ${screen.height}`;
   const phyRes = dpr !== 1
-    ? `${Math.round(screen.width * dpr)} × ${Math.round(screen.height * dpr)} (physical)`
+    ? `${Math.round(screen.width * dpr)} × ${Math.round(screen.height * dpr)}`
     : null;
 
+  let winDims = '—';
+  try {
+    const win = await chrome.windows.getCurrent();
+    winDims = `${win.width} × ${win.height}`;
+  } catch (_) { /* non-fatal */ }
+
   const rows = [
-    ['CPU Cores',  cores != null ? `${cores} logical` : '—'],
-    ['Device RAM', mem   != null ? `${mem} GB`        : '—'],
-    ['Resolution', res],
+    ['Screen',   res],
     ...(phyRes ? [['Physical', phyRes]] : []),
-    ['DPI Scale',  `${dpr}×`],
+    ['DPI Scale', `${dpr}×`],
+    ['Window',   winDims],
   ];
 
   container.innerHTML = rows.map(([label, value]) => `
@@ -339,9 +342,9 @@ function getTemplate() {
         <div class="ni-connection"></div>
       </div>
 
-      <!-- System -->
+      <!-- Display -->
       <div class="ni-section">
-        <div class="ni-section__label">System</div>
+        <div class="ni-section__label">Display</div>
         <div class="ni-system"></div>
       </div>
 

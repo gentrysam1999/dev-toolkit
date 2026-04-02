@@ -86,12 +86,11 @@ View live network and system information. Data refreshes automatically every 5 s
 - Round-trip time (RTT)
 - Save Data mode on/off
 
-**System** — hardware and display info:
-- Logical CPU core count
-- Device RAM (approximate, Chrome reports the nearest power of 2 up to 8 GB)
+**Display** — screen and window dimensions:
 - Screen resolution (logical pixels)
 - Physical resolution (shown when DPI scaling is active)
 - DPI scale factor
+- Browser window dimensions (outer width × height)
 
 ---
 
