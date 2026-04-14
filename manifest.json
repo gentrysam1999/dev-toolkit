@@ -26,6 +26,8 @@
   "host_permissions": [
     "https://api.ipify.org/",
     "https://api6.ipify.org/",
-    "https://speed.cloudflare.com/"
+    "https://cloudflare.com/",
+    "https://gist.githubusercontent.com/",
+    "http://*:8080/*"
   ]
 }
