@@ -299,14 +299,15 @@ function parseHslInput(str) {
 
 // ---- Per-value copy ------------------------------------------------------
 
-async function copyValueRow(row) {
-  const valueEl = row.querySelector('[class^="cp-"][class*="-value"]:not(.cp-values)');
+function copyValueRow(row) {
+  const valueEl = row.querySelector('input[class*="-value"]');
   if (!valueEl) return;
-  const text = (valueEl.value ?? valueEl.textContent).trim();
+  const text = valueEl.value.trim();
   if (text.includes('—') || text === '#------') return;
 
-  const copied = await writeToClipboard(text);
-  if (copied) flash(row.querySelector('.cp-row-copied'), 'cp-row-copied--visible');
+  writeToClipboard(text).then((copied) => {
+    if (copied) flash(row.querySelector('.cp-row-copied'), 'cp-row-copied--visible');
+  });
 }
 
 // ---- History -------------------------------------------------------------
